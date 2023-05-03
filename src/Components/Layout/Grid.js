@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import GridItem from "./GridItem";
-
+import FullScreenItem from "../FullScreenItem/FullScreenItem";
 const Grid = () => {
+  const [fullScreen, setFullScreen] = useState(null);
   const ITEMS = [
-    "rex-ray",
+    "circleAnimations",
     "sputnik",
     "edgex",
     "openswitch",
@@ -15,13 +16,24 @@ const Grid = () => {
     "istio",
   ];
 
+  const toggleFullScreen = (id) => {
+    if (id === fullScreen) {
+      setFullScreen(null);
+    } else {
+      setFullScreen(id);
+    }
+  };
   return (
     <div className="container">
-      <div className="grid-row">
-        {ITEMS.map((item) => {
-          return <GridItem id={item} />;
-        })}
-      </div>
+      {fullScreen ? (
+        <FullScreenItem id={fullScreen} toggleFullScreen={toggleFullScreen} />
+      ) : (
+        <div className="grid-row">
+          {ITEMS.map((item) => {
+            return <GridItem toggleFullScreen={toggleFullScreen} id={item} />;
+          })}
+        </div>
+      )}
     </div>
   );
 };
