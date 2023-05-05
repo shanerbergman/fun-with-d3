@@ -1,16 +1,42 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { VisualsLookupObject } from "../Visuals/VisualsLookupObject";
+import { Card } from "antd";
 
-const GridItem = ({ id, toggleFullScreen }) => {
-  const handleClick = () => toggleFullScreen(id);
+const GridItem = ({ id, title, backgroundImage }) => {
+  const [loading, setLoading] = useState(true);
 
-  const width = 300;
-  const height = 280;
-  const max_h = 250;
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
+  }, []);
+
   return (
-    <div className="grid-item">
+    <div>
+      <Card
+        loading={loading}
+        title={title}
+        headStyle={{
+          backgroundImage: backgroundImage,
+          color: "#ffffff",
+        }}
+      >
+        {VisualsLookupObject[id] ? (
+          VisualsLookupObject[id]()
+        ) : (
+          <span className="item-excerpt">{`content`}</span>
+        )}
+      </Card>
+    </div>
+  );
+};
+
+export default GridItem;
+
+/*
+<div className="grid-item">
       <div className="grid-item-wrapper">
-        <div className="grid-item-container">
+        <div ref={containerRef} className="grid-item-container">
           <div className={`grid-banner-top ${id}`}>
             <span className="centered project-image-bg rex-ray-image"></span>
           </div>
@@ -19,7 +45,7 @@ const GridItem = ({ id, toggleFullScreen }) => {
             <span className="item-category">Category</span>
 
             {VisualsLookupObject[id] ? (
-              VisualsLookupObject[id](width, height, max_h)
+              VisualsLookupObject[id](width, height, maxH, maxW)
             ) : (
               <span className="item-excerpt">{`${id}`}</span>
             )}
@@ -31,8 +57,4 @@ const GridItem = ({ id, toggleFullScreen }) => {
           </div>
         </div>
       </div>
-    </div>
-  );
-};
-
-export default GridItem;
+    </div>*/
