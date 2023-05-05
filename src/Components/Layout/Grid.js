@@ -9,8 +9,8 @@ const data = [
     backgroundImage: "linear-gradient(#007db8, #00447c)",
   },
   {
-    title: "Circle Plot",
-    id: "circle_plot",
+    title: "Circular Progress Bar",
+    id: "circular_progress_bar",
     backgroundImage: "linear-gradient(#952f4c, #3e1a51)",
   },
   {

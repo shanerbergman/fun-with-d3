@@ -9,7 +9,6 @@ const CircleAnimations = () => {
   const svgRef = useRef();
   const [{ height, width }, containerRef] = useDimensions();
   const [bounceBall, setBounceBall] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
   const handleClick = () => {
     setBounceBall(!bounceBall);
@@ -20,13 +19,7 @@ const CircleAnimations = () => {
       .style("border", "1px solid #BDBDBD")
       .attr("width", width)
       .attr("height", height);
-  }, [width, height, mounted]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setMounted(true);
-    }, 500);
-  }, []);
+  }, [width, height]);
 
   return (
     <>
