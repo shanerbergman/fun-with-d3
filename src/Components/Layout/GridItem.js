@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { VisualsLookupObject } from "../Visuals/VisualsLookupObject";
+import { VisualsLookupObject } from "../D3Visualisations/VisualsLookupObject";
 import { Card } from "antd";
 
 const GridItem = ({ id, title, backgroundImage }) => {

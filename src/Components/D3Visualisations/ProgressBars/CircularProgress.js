@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import * as d3 from "d3";
 
-const Progress = (props) => {
-  const { height, svgWidth, arcWidth, progressPercentage, colorIndicator } =
-    props;
+const CircularProgress = ({ progressPercentage, colorIndicator }) => {
+  const svgWidth = 150;
+  const arcWidth = 12;
+
   const svgHeight = svgWidth;
   const arcOuterRadius = svgWidth / 2;
   const arcInnerRadius = svgWidth / 2 - arcWidth;
@@ -21,11 +22,7 @@ const Progress = (props) => {
     });
 
   return (
-    <div
-      style={{
-        height: height,
-      }}
-    >
+    <>
       <svg height={svgHeight} width={svgWidth}>
         <g transform={`translate(${svgWidth / 2}, ${svgHeight / 2})`}>
           <path d={progressArc(1)} opacity="0.2" fill="gray" />
@@ -40,8 +37,8 @@ const Progress = (props) => {
           </text>
         </g>
       </svg>
-    </div>
+    </>
   );
 };
 
-export default Progress;
+export default CircularProgress;

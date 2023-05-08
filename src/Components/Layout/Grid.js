@@ -14,8 +14,8 @@ const data = [
     backgroundImage: "linear-gradient(#952f4c, #3e1a51)",
   },
   {
-    title: "3 Example",
-    id: "circle_plot",
+    title: "Bar Chart",
+    id: "bar_chart",
     backgroundImage: "linear-gradient(#2db89a, #00793d)",
   },
   {

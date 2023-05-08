@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import * as d3 from "d3";
 
-const BouncingBall = ({ bounceBall, max_h, max_w }) => {
+const BouncingBall = ({ width, height, bounceBall, max_h, max_w }) => {
+  const svgRef = useRef();
   // use state for Y position
   // use state for vY vertical velocity
   // use an effect to start/stop a timer
@@ -58,7 +59,15 @@ const BouncingBall = ({ bounceBall, max_h, max_w }) => {
     return () => t.stop();
   }, [bounceBall, max_h, max_w, startX]);
 
-  return <circle cy={yPos.y} cx={xPos.x} r={10} />;
+  useEffect(() => {
+    d3.select(svgRef.current).attr("width", width).attr("height", height);
+  }, [width, height]);
+
+  return (
+    <svg ref={svgRef}>
+      <circle cy={yPos.y} cx={xPos.x} r={10} />
+    </svg>
+  );
 };
 
 export default BouncingBall;
