@@ -4,7 +4,7 @@ import { List } from "antd";
 
 const data = [
   {
-    title: "Bouncing Ball",
+    title: "Bouncing Balls",
     id: "bouncing_ball",
     backgroundImage: "linear-gradient(#007db8, #00447c)",
   },
@@ -19,8 +19,8 @@ const data = [
     backgroundImage: "linear-gradient(#2db89a, #00793d)",
   },
   {
-    title: "4 Example",
-    id: "circle_plot",
+    title: "Map with GeoJson",
+    id: "map_with_geojson",
     backgroundImage: "linear-gradient(#e3dd1f, #eae659)",
   },
   {
