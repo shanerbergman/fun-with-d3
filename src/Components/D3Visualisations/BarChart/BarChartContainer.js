@@ -1,4 +1,3 @@
-// BarChart.js
 import React, { useState, useEffect } from "react";
 import { Tooltip, Button } from "antd";
 import { SyncOutlined } from "@ant-design/icons";

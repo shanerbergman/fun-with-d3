@@ -21,6 +21,13 @@ const Chart = ({ data, width, height }) => {
 
     const yScale = d3.scaleLinear().domain([0, height]).range([height, 0]);
 
+    // set up color scale
+    const colorScale = d3
+      .scaleLinear()
+      .domain([25, 150])
+      .range(["#D13D73", "#2db89a"])
+      .clamp(true);
+
     // set up the axes
     const xAxis = d3.axisBottom(xScale).ticks(data.length);
     svg
@@ -44,7 +51,26 @@ const Chart = ({ data, width, height }) => {
       .attr(`x`, (v, i) => xScale(i))
       .attr(`y`, -height)
       .attr(`width`, xScale.bandwidth())
+      .on("mouseenter", (event, value) => {
+        const index = svg.selectAll(".bar").nodes().indexOf(event.target);
+        svg
+          .selectAll(".tooltip")
+          .data([value])
+          .join((enter) => enter.append("text").attr("y", yScale(value) - 4))
+          .attr("class", "tooltip")
+          .text(value.toFixed(1))
+          .attr("x", xScale(index) + xScale.bandwidth() / 2)
+          .attr("text-anchor", "middle")
+          .transition()
+          .attr("y", yScale(value) - 8)
+          .attr("opacity", 1);
+        svg.selectAll(".bar").attr("opacity", (d, i) => {
+          return index === i ? 0.5 : 1;
+        });
+      })
+      .on("mouseleave", () => svg.select(".tooltip").remove())
       .transition()
+      .attr("fill", colorScale)
       .attr(`height`, (val) => height - yScale(val));
   }, [data]);
 
