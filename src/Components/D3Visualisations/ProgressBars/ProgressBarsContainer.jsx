@@ -1,14 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Tooltip, Button } from "antd";
 import { CaretRightOutlined, PauseOutlined } from "@ant-design/icons";
-import { useDimensions } from "../../../Utilities/Hooks/useDimensions";
 import * as d3 from "d3";
+import useResizeObserver from "../../../Utilities/Hooks/useResizeObserver";
+
 import CircularProgress from "./CircularProgress";
 import CircularProgress2 from "./CircularProgress2";
 import ControlContainer from "../Controls/ControlContainer";
+import AnimationFrame from "./AnimationFrame";
 
 const ProgressBarsContainer = () => {
-  const [{ height, width }, containerRef] = useDimensions();
+  const containerRef = useRef();
+  const dimensions = useResizeObserver(containerRef);
+  const [width, setWidth] = useState(0);
 
   const [start, setStart] = useState(false);
   const [progressPercentage, setProgressPercentage] = useState(1);
@@ -16,34 +20,33 @@ const ProgressBarsContainer = () => {
 
   const handleClick = () => setStart(!start);
 
-  useEffect(() => {
-    function loop() {
-      let per = progressPercentage;
-      let per2 = progressPercentage2;
+  function loop() {
+    let per = progressPercentage;
+    let per2 = progressPercentage2;
+    console.log("loop", per, per2);
 
-      if (per > 99) {
-        per = 1;
-      } else {
-        per = per + 0.1;
-      }
-
-      if (per2 < 1) {
-        per2 = 100;
-      } else {
-        per2 = per2 - 0.1;
-      }
-
-      setProgressPercentage(per);
-      setProgressPercentage2(per2);
-    }
-    const t = d3.timer(loop);
-    if (!start) {
-      t.stop();
+    if (per > 99) {
+      per = 1;
     } else {
-      t.restart(loop);
+      per = per + 0.1;
     }
-    return () => t.stop();
-  }, [progressPercentage, start]);
+
+    if (per2 < 1) {
+      per2 = 100;
+    } else {
+      per2 = per2 - 0.1;
+    }
+
+    setProgressPercentage(per);
+    setProgressPercentage2(per2);
+  }
+
+  useEffect(() => {
+    if (dimensions) {
+      const { width } = dimensions;
+      setWidth(width);
+    }
+  }, [dimensions]);
 
   return (
     <>
@@ -58,20 +61,36 @@ const ProgressBarsContainer = () => {
         }}
       >
         <div>
-          {height > 0 && (
-            <CircularProgress
-              height={200}
-              width={200}
-              progressPercentage={progressPercentage}
-            />
+          {width > 0 && (
+            <AnimationFrame autostart={start}>
+              {({ time }) => {
+                const t = time.fromStart / 250;
+
+                return (
+                  <CircularProgress
+                    height={200}
+                    width={200}
+                    progressPercentage={t}
+                  />
+                );
+              }}
+            </AnimationFrame>
           )}
 
-          {height > 0 && (
-            <CircularProgress2
-              width={200}
-              height={200}
-              progressPercentage={progressPercentage2}
-            />
+          {width > 0 && (
+            <AnimationFrame autostart={start}>
+              {({ time }) => {
+                const t = (25000 - time.fromStart) / 250;
+
+                return (
+                  <CircularProgress2
+                    width={200}
+                    height={200}
+                    progressPercentage={t}
+                  />
+                );
+              }}
+            </AnimationFrame>
           )}
         </div>
       </div>
@@ -89,3 +108,12 @@ const ProgressBarsContainer = () => {
 };
 
 export default ProgressBarsContainer;
+
+/*
+<Plot
+                  functions={[(x) => Math.sin(3 * x) * Math.sin(t / 2), (x) => Math.sin(2 * x) * Math.sin(t / 3)]}
+                  range={{ x: [0, Math.PI], y: [-1, 1] }}
+                  height={200}
+                  strokeWidth={4}
+                  hideXAxis={true}
+              />*/

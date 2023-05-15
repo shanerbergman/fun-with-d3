@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Tooltip, Button, Radio } from "antd";
 import { SyncOutlined } from "@ant-design/icons";
-import { useDimensions } from "../../../Utilities/Hooks/useDimensions";
+import useResizeObserver from "../../../Utilities/Hooks/useResizeObserver";
 import BarChart from "./BarChart";
 import AreaChart from "./AreaChart";
-import { HEIGHT_CONSTANT } from "../Constants";
 import ControlContainer from "../Controls/ControlContainer";
 
 const CHART_TYPES = [
@@ -19,7 +18,9 @@ const CHART_TYPES = [
 ];
 
 function ChartContainer() {
-  const [{ height, width }, containerRef] = useDimensions();
+  const containerRef = useRef();
+  const dimensions = useResizeObserver(containerRef);
+  const [width, setWidth] = useState(0);
   const [data, setData] = useState(null);
 
   const [chartType, setChartType] = useState("bar");
@@ -44,10 +45,17 @@ function ChartContainer() {
   };
 
   useEffect(() => {
-    if (height > 0) {
+    if (width > 0) {
       generateData();
     }
-  }, [height]);
+  }, [width]);
+
+  useEffect(() => {
+    if (dimensions) {
+      const { width } = dimensions;
+      setWidth(width);
+    }
+  }, [dimensions]);
 
   return (
     <>
@@ -60,7 +68,7 @@ function ChartContainer() {
           justifyContent: "center",
         }}
       >
-        {height > 0 && width > 0 && data && (
+        {width > 0 && data && (
           <>
             {chartType === "bar" && (
               <BarChart data={data} height={400} width={width - 10} />

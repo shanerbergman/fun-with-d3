@@ -1,14 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Select, Space } from "antd";
-import { useDimensions } from "../../../Utilities/Hooks/useDimensions";
+import useResizeObserver from "../../../Utilities/Hooks/useResizeObserver";
 import ChoroplethMap from "./ChoroplethMap";
 import ControlContainer from "../Controls/ControlContainer";
 
 const ChoroplethMapContainer = () => {
-  const [{ height, width }, containerRef] = useDimensions();
+  const containerRef = useRef();
+  const dimensions = useResizeObserver(containerRef);
+  const [width, setWidth] = useState(0);
   const [selectedType, setSelectedType] = useState("fertilityRate");
 
   const handleChange = (e) => setSelectedType(e);
+
+  useEffect(() => {
+    if (dimensions) {
+      const { width } = dimensions;
+      setWidth(width);
+    }
+  }, [dimensions]);
 
   return (
     <>
@@ -19,7 +28,13 @@ const ChoroplethMapContainer = () => {
           width: "100%",
         }}
       >
-        <ChoroplethMap width={width} height={400} selectedType={selectedType} />
+        {width > 0 && (
+          <ChoroplethMap
+            width={width}
+            height={400}
+            selectedType={selectedType}
+          />
+        )}
       </div>
       <ControlContainer>
         <Space wrap>

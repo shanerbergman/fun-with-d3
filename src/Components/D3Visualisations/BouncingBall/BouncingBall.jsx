@@ -147,6 +147,7 @@ const BouncingBall = ({
         ? balls.map((ball) => {
             return (
               <circle
+                key={`ball_${ball.id}`}
                 id={ball.id}
                 cy={ball.yPos.y}
                 cx={ball.xPos.x}

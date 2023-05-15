@@ -50,7 +50,7 @@ const CircularProgress = ({ width, height, progressPercentage }) => {
           transform={`translate(${width / 2}, ${height / 2})`}
           fill={"white"}
           stroke="gray"
-          stroke-width="1"
+          strokeWidth="1"
         />
         <g transform={`translate(${width / 2}, ${height / 2})`}>
           <path d={progressArc(1)} opacity="0.2" fill="gray" />

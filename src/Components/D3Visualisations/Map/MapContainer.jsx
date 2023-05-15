@@ -1,12 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Tooltip, Button } from "antd";
-import { useDimensions } from "../../../Utilities/Hooks/useDimensions";
+import useResizeObserver from "../../../Utilities/Hooks/useResizeObserver";
 import Map from "./Map";
 import ControlContainer from "../Controls/ControlContainer";
 
 const MapContainer = () => {
-  const [{ height, width }, containerRef] = useDimensions();
+  const containerRef = useRef();
+  const dimensions = useResizeObserver(containerRef);
+  const [width, setWidth] = useState(0);
 
+  useEffect(() => {
+    if (dimensions) {
+      const { width } = dimensions;
+      setWidth(width);
+    }
+  }, [dimensions]);
   return (
     <>
       <div
@@ -16,7 +24,7 @@ const MapContainer = () => {
           width: "100%",
         }}
       >
-        <Map width={width} height={400} />
+        {width > 0 && <Map width={width} height={400} />}
       </div>
       <ControlContainer></ControlContainer>
     </>

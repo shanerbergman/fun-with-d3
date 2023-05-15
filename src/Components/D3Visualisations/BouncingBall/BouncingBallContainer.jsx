@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Tooltip, Button, InputNumber } from "antd";
 import { CaretRightOutlined, PauseOutlined } from "@ant-design/icons";
-import { useDimensions } from "../../../Utilities/Hooks/useDimensions";
+import useResizeObserver from "../../../Utilities/Hooks/useResizeObserver";
 import BouncingBall from "./BouncingBall";
 import ControlContainer from "../Controls/ControlContainer";
 
 const BouncingBallContainer = () => {
-  const [{ height, width }, containerRef] = useDimensions();
+  const containerRef = useRef();
+  const dimensions = useResizeObserver(containerRef);
+  const [width, setWidth] = useState(0);
+
   const [bounceBall, setBounceBall] = useState(false);
   const [ballCount, setBallCount] = useState(10);
   const handleClick = () => {
@@ -14,6 +17,13 @@ const BouncingBallContainer = () => {
   };
 
   const handleCountChange = (e) => setBallCount(e);
+
+  useEffect(() => {
+    if (dimensions) {
+      const { width } = dimensions;
+      setWidth(width);
+    }
+  }, [dimensions]);
 
   return (
     <>
