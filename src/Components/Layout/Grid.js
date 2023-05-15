@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import GridItem from "./GridItem";
 import { List } from "antd";
 
@@ -14,8 +14,8 @@ const data = [
     backgroundImage: "linear-gradient(#952f4c, #3e1a51)",
   },
   {
-    title: "Bar Chart",
-    id: "bar_chart",
+    title: "Charts",
+    id: "charts",
     backgroundImage: "linear-gradient(#2db89a, #00793d)",
   },
   {
@@ -24,27 +24,13 @@ const data = [
     backgroundImage: "linear-gradient(#e3dd1f, #eae659)",
   },
   {
-    title: "5 Example",
-    id: "circle_plot",
-    backgroundImage: "linear-gradient(#9d7865, #c7b5ac)",
-  },
-  {
-    title: "6 Example",
-    id: "circle_plot",
+    title: "Choropleth Map",
+    id: "choropleth_map",
     backgroundImage: "linear-gradient(#da1414, #ffc000)",
   },
 ];
 
 const Grid = () => {
-  const [fullScreen, setFullScreen] = useState(null);
-
-  const toggleFullScreen = (id) => {
-    if (id === fullScreen) {
-      setFullScreen(null);
-    } else {
-      setFullScreen(id);
-    }
-  };
   return (
     <div
       style={{

@@ -1,18 +1,19 @@
 import React, { useState } from "react";
-import { Tooltip, Button } from "antd";
+import { Tooltip, Button, InputNumber } from "antd";
 import { CaretRightOutlined, PauseOutlined } from "@ant-design/icons";
 import { useDimensions } from "../../../Utilities/Hooks/useDimensions";
 import BouncingBall from "./BouncingBall";
-import { HEIGHT_CONSTANT } from "../Constants";
 import ControlContainer from "../Controls/ControlContainer";
 
 const BouncingBallContainer = () => {
   const [{ height, width }, containerRef] = useDimensions();
   const [bounceBall, setBounceBall] = useState(false);
-
+  const [ballCount, setBallCount] = useState(10);
   const handleClick = () => {
     setBounceBall(!bounceBall);
   };
+
+  const handleCountChange = (e) => setBallCount(e);
 
   return (
     <>
@@ -23,22 +24,45 @@ const BouncingBallContainer = () => {
           width: "100%",
         }}
       >
-        <BouncingBall
-          bounceBall={bounceBall}
-          width={width}
-          height={height - HEIGHT_CONSTANT}
-          max_h={height - 30}
-          max_w={width - 30}
-        />
+        {width > 0 && (
+          <BouncingBall
+            bounceBall={bounceBall}
+            width={width}
+            height={400 - 5}
+            ballCount={ballCount}
+            max_h={400 - 100}
+            max_w={width - 30}
+          />
+        )}
       </div>
       <ControlContainer>
-        <Tooltip title={bounceBall ? "Pause Bouncing" : "Start Bouncing"}>
-          <Button
-            onClick={handleClick}
-            shape="circle"
-            icon={bounceBall ? <PauseOutlined /> : <CaretRightOutlined />}
-          />
-        </Tooltip>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "175px",
+          }}
+        >
+          <Tooltip title={bounceBall ? "Pause Bouncing" : "Start Bouncing"}>
+            <Button
+              onClick={handleClick}
+              shape="circle"
+              icon={bounceBall ? <PauseOutlined /> : <CaretRightOutlined />}
+            />
+          </Tooltip>
+          <Tooltip title={"Change Ball Count"}>
+            <InputNumber
+              onChange={handleCountChange}
+              min={1}
+              max={50}
+              value={ballCount}
+              onKeyDown={(event) => {
+                event.preventDefault();
+              }}
+            />
+          </Tooltip>
+        </div>
       </ControlContainer>
     </>
   );

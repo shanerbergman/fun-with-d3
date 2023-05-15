@@ -2,74 +2,103 @@ import React, { useState, useEffect, useRef } from "react";
 import * as d3 from "d3";
 import Defs from "./Defs";
 
-const BouncingBall = ({ width, height, bounceBall, max_h, max_w }) => {
+const BouncingBall = ({
+  width,
+  height,
+  bounceBall,
+  ballCount,
+  max_h,
+  max_w,
+}) => {
   const svgRef = useRef();
-  // use state for Y position
-  // use state for vY vertical velocity
-  // use an effect to start/stop a timer
-  // write loop
-  const [yPos, setBall] = useState([
-    {
-      id: 1,
-      y: 60,
-      vy: 0.5,
-    },
-    {
-      id: 2,
-      y: 75,
-      vy: 0.7,
-    },
-    {
-      id: 3,
-      y: 75,
-      vy: 0.4,
-    },
-    {
-      id: 4,
-      y: 72,
-      vy: 0.2,
-    },
-    {
-      id: 5,
-      y: 77,
-      vy: 0.05,
-    },
-  ]);
-  const [startX, setStartX] = useState(false);
-  const [xPos, setXPos] = useState([
-    {
-      id: 1,
-      x: 50,
-      vx: 0.5,
-    },
-    {
-      id: 2,
-      x: 55,
-      vx: 0.3,
-    },
-    {
-      id: 3,
-      x: 65,
-      vx: 0.6,
-    },
-    {
-      id: 4,
-      x: 77,
-      vx: 0.1,
-    },
-    {
-      id: 5,
-      x: 72,
-      vx: 0.08,
-    },
-  ]);
+
+  const [balls, setBalls] = useState(null);
+
+  const getRandomNumber = (min, max) => {
+    return Math.floor(Math.random() * (max - min) + min);
+  };
+  const getFill = () => {
+    const num = getRandomNumber(1, 10);
+    return `url(#${num})`;
+  };
+
+  const getR = () => {
+    const num = getRandomNumber(10, 50);
+    return num;
+  };
+
+  const getYPos = () => {
+    const yPos = {
+      y: getRandomNumber(45, 300),
+      vy: getRandomNumber(1, 15) / 10,
+    };
+    return yPos;
+  };
+
+  const getXPos = () => {
+    const xPos = {
+      x: getRandomNumber(45, width - 100),
+      vx: getRandomNumber(1, 15) / 10,
+    };
+    return xPos;
+  };
+
+  const generateBalls = () => {
+    const newBalls = [];
+
+    for (let x = 1; x <= ballCount; x++) {
+      let b = {
+        id: x,
+        fill: getFill(),
+        r: getR(),
+        yPos: getYPos(),
+        xPos: getXPos(),
+        startX: false,
+      };
+      newBalls.push(b);
+    }
+    setBalls(newBalls);
+  };
+
+  const addBall = () => {
+    const newBalls = [...balls];
+
+    let b = {
+      id: ballCount,
+      fill: getFill(),
+      r: getR(),
+      yPos: getYPos(),
+      xPos: getXPos(),
+      startX: false,
+    };
+    newBalls.push(b);
+    setBalls(newBalls);
+  };
+  const removeBall = () => {
+    const newBalls = balls.filter((ball) => ball.id !== ballCount + 1);
+    setBalls(newBalls);
+  };
+
+  useEffect(() => {
+    if (ballCount) {
+      if (!balls) {
+        generateBalls();
+      } else {
+        if (ballCount > balls.length) {
+          addBall();
+        } else {
+          removeBall();
+        }
+      }
+    }
+  }, [ballCount]);
 
   useEffect(() => {
     function loop() {
       if (bounceBall) {
-        if (startX) {
-          let newXPos = xPos.map((xPos) => {
-            let { id, x, vx } = xPos;
+        const newBalls = balls.map((ball) => {
+          if (ball.startX) {
+            let { x, vx } = ball.xPos;
             if (x > max_w) {
               vx = -vx;
             }
@@ -77,70 +106,56 @@ const BouncingBall = ({ width, height, bounceBall, max_h, max_w }) => {
               x = 10.1;
               vx = vx * -1;
             }
-            return {
-              id,
-              x: x + vx,
-              vx: vx + 0.01,
-            };
-          });
-          setXPos(newXPos);
-        }
+            ball.xPos.x = x + vx;
+            ball.xPos.vx = vx + 0.01;
+          }
 
-        let newYPos = yPos.map((yPos) => {
-          let { id, y, vy } = yPos;
-
+          let { y, vy } = ball.yPos;
           if (y > max_h) {
             vy = -vy;
-            if (!startX) {
-              setStartX(true);
+            if (!ball.startX) {
+              ball.startX = true;
             }
           }
 
-          if (y < 10) {
-            y = 10.1;
+          if (y < 50) {
+            y = 50.1;
             vy = vy * -1;
           }
 
-          return {
-            id,
-            y: y + vy,
-            vy: vy + 0.05,
-          };
+          ball.yPos.y = y + vy;
+          ball.yPos.vy = vy + 0.05;
+          return ball;
         });
 
-        setBall(newYPos);
+        setBalls(newBalls);
       }
     }
 
     const t = d3.timer(loop);
     return () => t.stop();
-  }, [bounceBall, max_h, max_w, yPos, xPos, startX]);
+  }, [bounceBall, max_h, max_w, balls]);
 
   useEffect(() => {
     d3.select(svgRef.current).attr("width", width).attr("height", height);
   }, [width, height]);
 
-  const BALLS = [
-    { id: 5, fill: "url(#5)", r: 50 },
-    { id: 4, fill: "url(#4)", r: 35 },
-    { id: 3, fill: "url(#3)", r: 25 },
-    { id: 2, fill: "url(#2)", r: 15 },
-    { id: 1, fill: "url(#1)", r: 10 },
-  ];
   return (
     <svg ref={svgRef}>
       <Defs />
-      {BALLS.map((ball) => {
-        return (
-          <circle
-            id={ball.id}
-            cy={yPos.filter((yP) => yP.id === ball.id).map((yP) => yP.y)}
-            cx={xPos.filter((xP) => xP.id === ball.id).map((xP) => xP.x)}
-            r={ball.r}
-            fill={ball.fill}
-          />
-        );
-      })}
+      {balls
+        ? balls.map((ball) => {
+            return (
+              <circle
+                id={ball.id}
+                cy={ball.yPos.y}
+                cx={ball.xPos.x}
+                r={ball.r}
+                fill={ball.fill}
+              />
+            );
+          })
+        : null}
     </svg>
   );
 };

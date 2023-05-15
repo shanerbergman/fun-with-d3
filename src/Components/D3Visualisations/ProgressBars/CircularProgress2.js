@@ -24,22 +24,22 @@ const CircularProgress = ({ width, height, progressPercentage }) => {
     <>
       <svg width={width} height={height}>
         <defs>
-          <linearGradient id="line1" x1="0%" y1="0%" x2="100%" y2="0%">
+          <linearGradient id="line2" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop
               offset="0%"
-              style={{ stopColor: "#952f4c", stopOpacity: 1 }}
+              style={{ stopColor: "#d7191c", stopOpacity: 1 }}
             />
             <stop
               offset="25%"
-              style={{ stopColor: "#952f4c", stopOpacity: 0.75 }}
+              style={{ stopColor: "#fdae61", stopOpacity: 1 }}
             />
             <stop
               offset="50%"
-              style={{ stopColor: "#952f4c", stopOpacity: 0.5 }}
+              style={{ stopColor: "#ffffbf", stopOpacity: 1 }}
             />
             <stop
               offset="100%"
-              style={{ stopColor: "#3e1a51", stopOpacity: 0.25 }}
+              style={{ stopColor: "#a6d96a", stopOpacity: 1 }}
             />
           </linearGradient>
         </defs>
@@ -48,7 +48,7 @@ const CircularProgress = ({ width, height, progressPercentage }) => {
           cy="0"
           r="90"
           transform={`translate(${width / 2}, ${height / 2})`}
-          fill="white"
+          fill={"white"}
           stroke="gray"
           stroke-width="1"
         />
@@ -58,7 +58,7 @@ const CircularProgress = ({ width, height, progressPercentage }) => {
         <g transform={`translate(${width / 2}, ${height / 2})`}>
           <path
             d={progressArc(progressPercentage / 100)}
-            fill={`url(#line1)`}
+            fill={`url(#line2)`}
           />
           <text x="-10" y="5">
             {`${progressPercentage.toFixed(0)}%`}

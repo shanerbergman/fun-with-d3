@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import * as d3 from "d3";
 
-const Chart = ({ data, width, height }) => {
+const BarChart = ({ data, width, height }) => {
   const svgRef = useRef();
 
   useEffect(() => {
@@ -72,7 +72,7 @@ const Chart = ({ data, width, height }) => {
       .transition()
       .attr("fill", colorScale)
       .attr(`height`, (val) => height - yScale(val));
-  }, [data]);
+  }, [data, width]);
 
   return (
     <svg ref={svgRef}>
@@ -82,4 +82,4 @@ const Chart = ({ data, width, height }) => {
   );
 };
 
-export default Chart;
+export default BarChart;
