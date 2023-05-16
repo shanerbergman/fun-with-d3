@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { Tooltip, Button, InputNumber } from "antd";
 import { CaretRightOutlined, PauseOutlined } from "@ant-design/icons";
 import useResizeObserver from "../../../Utilities/Hooks/useResizeObserver";
@@ -12,11 +12,18 @@ const BouncingBallContainer = () => {
 
   const [bounceBall, setBounceBall] = useState(false);
   const [ballCount, setBallCount] = useState(10);
+
   const handleClick = () => {
     setBounceBall(!bounceBall);
   };
 
-  const handleCountChange = (e) => setBallCount(e);
+  const handleCountChange = (e) => {
+    if (bounceBall) {
+      setBounceBall(false);
+    }
+
+    setBallCount(e);
+  };
 
   useEffect(() => {
     if (dimensions) {
