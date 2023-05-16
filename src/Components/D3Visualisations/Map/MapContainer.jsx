@@ -8,6 +8,7 @@ const MapContainer = () => {
   const containerRef = useRef();
   const dimensions = useResizeObserver(containerRef);
   const [width, setWidth] = useState(0);
+  const [stateInfo, setStateInfo] = useState(null);
 
   useEffect(() => {
     if (dimensions) {
@@ -20,13 +21,19 @@ const MapContainer = () => {
       <div
         ref={containerRef}
         style={{
-          minHeight: "200px",
+          minHeight: "400px",
           width: "100%",
         }}
       >
-        {width > 0 && <Map width={width} height={400} />}
+        {width > 0 && (
+          <Map width={width} height={400} setStateInfo={setStateInfo} />
+        )}
       </div>
-      <ControlContainer></ControlContainer>
+      <ControlContainer>
+        <div style={{ height: "32px" }}>
+          {stateInfo ? stateInfo : "Hover over state for State Name"}
+        </div>
+      </ControlContainer>
     </>
   );
 };

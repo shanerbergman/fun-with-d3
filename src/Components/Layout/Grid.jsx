@@ -19,7 +19,7 @@ const data = [
     backgroundImage: "linear-gradient(#2db89a, #00793d)",
   },
   {
-    title: "Map with GeoJson",
+    title: "Simple Map with Hover Over",
     id: "map_with_geojson",
     backgroundImage: "linear-gradient(#e3dd1f, #eae659)",
   },

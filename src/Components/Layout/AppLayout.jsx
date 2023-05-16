@@ -24,9 +24,7 @@ const AppLayout = () => {
       <Content style={{ padding: "0 50px" }}>
         <Grid />
       </Content>
-      <Footer style={{ textAlign: "center" }}>
-        Ant Design ©2023 Created by Ant UED
-      </Footer>
+      <Footer style={{ textAlign: "center" }}>Shane Bergman - 2023</Footer>
     </Layout>
   );
 };

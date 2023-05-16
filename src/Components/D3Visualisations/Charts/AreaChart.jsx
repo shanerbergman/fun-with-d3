@@ -35,14 +35,18 @@ const AreaChart = ({ data, width, height }) => {
       .curve(d3.curveCardinal);
 
     // append new area to svg
-    svg
+    const areaPath = svg.selectAll(".area").data([data]);
+
+    areaPath
+      .enter()
       .append("g")
       .attr("class", "area")
       .append("path")
-      .datum(data)
       .attr("fill", "steelblue")
+      .merge(areaPath)
+      .transition()
+      .duration(500)
       .attr("d", area);
-
     // add axis
     const xAxis = d3.axisBottom(xScale);
     const yAxis = d3.axisLeft(yScale);
@@ -67,3 +71,52 @@ const AreaChart = ({ data, width, height }) => {
 };
 
 export default AreaChart;
+
+/* CHAT GPT TRANSITION
+
+    // set up svg container
+    const svg = d3.select(svgRef.current);
+
+    // create scales
+    const xScale = d3
+      .scaleLinear()
+      .domain([0, data.length - 1])
+      .range([0, width]);
+
+    const yScale = d3
+      .scaleLinear()
+      .domain([0, d3.max(data)])
+      .range([height, 0]);
+
+    // create area
+    const area = d3
+      .area()
+      .x((d, i) => xScale(i))
+      .y0(height)
+      .y1((d) => yScale(d))
+      .curve(d3.curveCardinal);
+
+    // select the existing area path or create a new one
+    const areaPath = svg.select(".area path").empty()
+      ? svg.append("g").attr("class", "area").append("path")
+      : svg.select(".area path");
+
+    // animate transition for data change
+    areaPath
+      .datum(data)
+      .transition()
+      .duration(500)
+      .attr("d", area)
+      .attr("fill", "steelblue");
+
+    // update axis
+    const xAxis = d3.axisBottom(xScale);
+    const yAxis = d3.axisLeft(yScale);
+
+    svg
+      .select(".x-axis")
+      .attr("transform", `translate(0,${height})`)
+      .call(xAxis);
+
+    svg.select(".y-axis").call(yAxis);
+    */
