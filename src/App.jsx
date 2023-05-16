@@ -1,11 +1,10 @@
 import "./App.css";
-import Grid from "./Components/Layout/Grid";
+import AppLayout from "./Components/Layout/AppLayout";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header"></header>
-      <Grid />
+      <AppLayout />
     </div>
   );
 }
