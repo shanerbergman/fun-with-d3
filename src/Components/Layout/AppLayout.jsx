@@ -17,8 +17,27 @@ const AppLayout = () => {
           alignItems: "center",
         }}
       >
-        <Typography.Title level={3} style={{ margin: 0, color: "#f5f5f5" }}>
+        <Typography.Title
+          level={4}
+          style={{
+            margin: 0,
+            color: "#f5f5f5",
+            display: "flex",
+            justifyContent: "space-between",
+            width: "100%",
+          }}
+        >
           <div>Fun with D3 - Visualization with React & D3</div>
+          <div>
+            <a
+              href={`https://shanebergman.com`}
+              target="_blank"
+              rel="noreferrer"
+              style={{ color: "#f5f5f5" }}
+            >
+              shanebergman.com
+            </a>
+          </div>
         </Typography.Title>
       </Header>
       <Content style={{ padding: "0 50px" }}>
