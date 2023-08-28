@@ -17,15 +17,16 @@ const dataTop = [
 
 const dataMiddle = [
   {
-    title: "Charts - Area",
-    id: "area",
-    backgroundImage: "linear-gradient(#2db89a, #00793d)",
-  },
-  {
     title: "Charts - Line",
     id: "line",
     backgroundImage: "linear-gradient(#2db89a, #00793d)",
   },
+  {
+    title: "Charts - Area",
+    id: "area",
+    backgroundImage: "linear-gradient(#2db89a, #00793d)",
+  },
+
   {
     title: "Charts - Bar",
     id: "bar",
