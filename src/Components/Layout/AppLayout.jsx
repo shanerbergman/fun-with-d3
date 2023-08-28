@@ -1,9 +1,9 @@
 import React from "react";
-import { Breadcrumb, Layout, Menu, theme, Typography } from "antd";
+import { Layout, Typography } from "antd";
 import Grid from "./Grid";
 
 const { Header, Content, Footer } = Layout;
-const { Paragraph } = Typography;
+
 const AppLayout = () => {
   return (
     <Layout className="layout">

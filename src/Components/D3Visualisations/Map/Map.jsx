@@ -25,7 +25,6 @@ const Map = ({ width, height, setStateInfo }) => {
           .enter()
           .append(`path`)
           .attr(`id`, (d) => {
-            console.log("ID", d);
             return `state_${d.id}`;
           })
           .attr(`class`, `state`)

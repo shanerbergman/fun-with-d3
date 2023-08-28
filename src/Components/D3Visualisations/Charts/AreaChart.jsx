@@ -1,122 +1,84 @@
 import React, { useRef, useEffect } from "react";
 import * as d3 from "d3";
 
-const AreaChart = ({ data, width, height }) => {
+const AreaChart = ({ width, height }) => {
   const svgRef = useRef();
 
   useEffect(() => {
+    const margin = { top: 60, right: 70, bottom: 40, left: 70 };
+    const useableWidth = width - margin.left - margin.right;
+    const useableHeight = height - margin.top - margin.bottom;
+
     // set up svg container
     const svg = d3
       .select(svgRef.current)
       .attr("width", width)
       .attr("height", height)
-      .style("overflow", "visible");
-
-    // remove old area svg
-    svg.selectAll(".area").remove();
-
-    // create scales
-    const xScale = d3
-      .scaleLinear()
-      .domain([0, data.length - 1])
-      .range([0, width]);
-
-    const yScale = d3
-      .scaleLinear()
-      .domain([0, d3.max(data)])
-      .range([height, 0]);
-
-    // create area
-    const area = d3
-      .area()
-      .x((d, i) => xScale(i))
-      .y0(height)
-      .y1((d) => yScale(d))
-      .curve(d3.curveCardinal);
-
-    // append new area to svg
-    const areaPath = svg.selectAll(".area").data([data]);
-
-    areaPath
-      .enter()
       .append("g")
-      .attr("class", "area")
-      .append("path")
-      .attr("fill", "steelblue")
-      .merge(areaPath)
-      .transition()
-      .duration(500)
-      .attr("d", area);
-    // add axis
-    const xAxis = d3.axisBottom(xScale);
-    const yAxis = d3.axisLeft(yScale);
+      .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-    svg
-      .append("g")
-      .attr("transform", `translate(0,${height})`)
-      .call(xAxis)
-      .attr("class", "area");
+    const x = d3.scaleTime().range([0, useableWidth]);
 
-    svg.append("g").call(yAxis).attr("class", "area");
-  }, [data, width, height]);
+    const y = d3.scaleLinear().range([useableHeight, 0]);
+
+    d3.csv("./BTC-USD.csv").then((data) => {
+      const parseDate = d3.timeParse("%Y-%m-%d");
+      data.forEach((d) => {
+        d.Date = parseDate(d.Date);
+        d.Close = +d.Close;
+      });
+
+      x.domain(d3.extent(data, (d) => d.Date));
+      y.domain([0, d3.max(data, (d) => d.Close)]);
+      // add x axis
+      svg
+        .append("g")
+        .attr("transform", `translate(0, ${useableHeight})`)
+        .call(d3.axisBottom(x));
+      // add y axis
+      svg.append("g").call(d3.axisLeft(y));
+      svg
+        .append("g")
+        .attr("transform", `translate(${useableWidth}, 0)`)
+        .call(d3.axisRight(y));
+      // create line
+      const line = d3
+        .line()
+        .x((d) => x(d.Date))
+        .y((d) => y(d.Close));
+
+      // create area
+
+      const area = d3
+        .area()
+        .x((d) => x(d.Date))
+        .y0(useableHeight)
+        .y1((d) => y(d.Close));
+
+      svg
+        .append("path")
+        .datum(data)
+        .attr("clas", "area")
+        .attr("d", area)
+        .style("fill", "steelblue")
+        .style("opacity", 0.45);
+
+      svg
+        .append("path")
+        .datum(data)
+        .attr("class", "line")
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 1)
+        .attr("d", line);
+    });
+  }, [width]);
 
   return (
     <>
-      <svg ref={svgRef}>
-        <g className="x-axis" />
-        <g className="y-axis" />
-      </svg>
+      <svg ref={svgRef}></svg>
     </>
   );
 };
 
 export default AreaChart;
-
-/* CHAT GPT TRANSITION
-
-    // set up svg container
-    const svg = d3.select(svgRef.current);
-
-    // create scales
-    const xScale = d3
-      .scaleLinear()
-      .domain([0, data.length - 1])
-      .range([0, width]);
-
-    const yScale = d3
-      .scaleLinear()
-      .domain([0, d3.max(data)])
-      .range([height, 0]);
-
-    // create area
-    const area = d3
-      .area()
-      .x((d, i) => xScale(i))
-      .y0(height)
-      .y1((d) => yScale(d))
-      .curve(d3.curveCardinal);
-
-    // select the existing area path or create a new one
-    const areaPath = svg.select(".area path").empty()
-      ? svg.append("g").attr("class", "area").append("path")
-      : svg.select(".area path");
-
-    // animate transition for data change
-    areaPath
-      .datum(data)
-      .transition()
-      .duration(500)
-      .attr("d", area)
-      .attr("fill", "steelblue");
-
-    // update axis
-    const xAxis = d3.axisBottom(xScale);
-    const yAxis = d3.axisLeft(yScale);
-
-    svg
-      .select(".x-axis")
-      .attr("transform", `translate(0,${height})`)
-      .call(xAxis);
-
-    svg.select(".y-axis").call(yAxis);
-    */

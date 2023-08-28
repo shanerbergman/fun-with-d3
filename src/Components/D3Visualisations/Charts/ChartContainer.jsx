@@ -8,53 +8,10 @@ import ScatterChart from "./ScatterChart";
 import AreaChart from "./AreaChart";
 import ControlContainer from "../Controls/ControlContainer";
 
-const CHART_TYPES = [
-  {
-    label: "Bar",
-    value: "bar",
-  },
-  {
-    label: "Scatter",
-    value: "scatter",
-  },
-  {
-    label: "Area",
-    value: "area",
-  },
-];
-
 function ChartContainer({ type }) {
   const containerRef = useRef();
   const dimensions = useResizeObserver(containerRef);
   const [width, setWidth] = useState(0);
-  const [data, setData] = useState(null);
-
-  const [chartType, setChartType] = useState("line");
-
-  const handleClick = () => {
-    generateData();
-  };
-
-  const handleChange = (e) => {
-    setChartType(e.target.value);
-  };
-
-  const generateData = () => {
-    const data = [];
-    const count = Math.floor(Math.random() * (14 - 7 + 1) + 7);
-    for (let i = 0; i <= count; i++) {
-      const d = Math.random() * (400 - 15 - 25);
-      data.push(d);
-    }
-
-    setData(data);
-  };
-
-  useEffect(() => {
-    if (width > 0) {
-      generateData();
-    }
-  }, [width]);
 
   useEffect(() => {
     if (dimensions) {
@@ -75,21 +32,23 @@ function ChartContainer({ type }) {
         }}
         className={"chart-container"}
       >
-        {width > 0 && data && (
+        {width > 0 && (
           <>
             {type === "line" && (
               <LineChart
                 key={`line_${width}`}
-                data={data}
                 height={400}
                 width={width - 10}
               />
             )}
 
             {type === "bar" && (
-              <BarChart
-                key={`bar_${width}`}
-                data={data}
+              <BarChart key={`bar_${width}`} height={400} width={width - 10} />
+            )}
+
+            {type === "area" && (
+              <AreaChart
+                key={`area_${width}`}
                 height={400}
                 width={width - 10}
               />

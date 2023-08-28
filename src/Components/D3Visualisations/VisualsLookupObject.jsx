@@ -8,6 +8,7 @@ export const VisualsLookupObject = {
   circular_progress_bar: () => <ProgressBarsContainer />,
   line: () => <ChartContainer type={"line"} />,
   bar: () => <ChartContainer type={"bar"} />,
+  area: () => <ChartContainer type={"area"} />,
   map_with_geojson: () => <MapContainer />,
   choropleth_map: () => <ChoroplethMapContainer />,
 };
