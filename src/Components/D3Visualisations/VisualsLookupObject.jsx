@@ -6,7 +6,8 @@ import ChoroplethMapContainer from "./ChoroplethMap/ChoroplethMapContainer";
 export const VisualsLookupObject = {
   bouncing_ball: () => <BouncingBallContainer />,
   circular_progress_bar: () => <ProgressBarsContainer />,
-  charts: () => <ChartContainer />,
+  line: () => <ChartContainer type={"line"} />,
+  bar: () => <ChartContainer type={"bar"} />,
   map_with_geojson: () => <MapContainer />,
   choropleth_map: () => <ChoroplethMapContainer />,
 };

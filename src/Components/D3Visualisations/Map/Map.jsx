@@ -33,11 +33,8 @@ const Map = ({ width, height, setStateInfo }) => {
           .attr(`fill`, "white")
           .attr(`stroke`, `black`)
           .on("mouseenter", (event, d) => {
-            console.log("MOUSE OVER", d);
             setStateInfo(d.properties.name);
             d3.selectAll(`#state_${d.id}`).style("fill", "#818181");
-            //.attr(`stroke`, `red`)
-            // .attr(`stroke-width`, 6);
           })
           .on("mouseleave", () => {
             setStateInfo(null);

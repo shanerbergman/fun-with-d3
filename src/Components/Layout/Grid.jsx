@@ -2,7 +2,7 @@ import React from "react";
 import GridItem from "./GridItem";
 import { List } from "antd";
 
-const data = [
+const dataTop = [
   {
     title: "Bouncing Balls",
     id: "bouncing_ball",
@@ -13,11 +13,22 @@ const data = [
     id: "circular_progress_bar",
     backgroundImage: "linear-gradient(#952f4c, #3e1a51)",
   },
+];
+
+const dataMiddle = [
   {
-    title: "Charts",
-    id: "charts",
+    title: "Charts - Line",
+    id: "line",
     backgroundImage: "linear-gradient(#2db89a, #00793d)",
   },
+  {
+    title: "Charts - Bar",
+    id: "bar",
+    backgroundImage: "linear-gradient(#2db89a, #00793d)",
+  },
+];
+
+const dataBottom = [
   {
     title: "Simple Map with Hover Over",
     id: "map_with_geojson",
@@ -42,12 +53,54 @@ const Grid = () => {
           gutter: 16,
           xs: 1,
           sm: 1,
-          md: 2,
+          md: 1,
           lg: 2,
-          xl: 3,
-          xxl: 3,
+          xl: 2,
+          xxl: 2,
         }}
-        dataSource={data}
+        dataSource={dataTop}
+        renderItem={(item) => (
+          <List.Item>
+            <GridItem
+              id={item.id}
+              title={item.title}
+              backgroundImage={item.backgroundImage}
+            ></GridItem>
+          </List.Item>
+        )}
+      />
+      <List
+        grid={{
+          gutter: 16,
+          xs: 1,
+          sm: 1,
+          md: 1,
+          lg: 1,
+          xl: 1,
+          xxl: 1,
+        }}
+        dataSource={dataMiddle}
+        renderItem={(item) => (
+          <List.Item>
+            <GridItem
+              id={item.id}
+              title={item.title}
+              backgroundImage={item.backgroundImage}
+            ></GridItem>
+          </List.Item>
+        )}
+      />
+      <List
+        grid={{
+          gutter: 16,
+          xs: 1,
+          sm: 1,
+          md: 1,
+          lg: 2,
+          xl: 2,
+          xxl: 2,
+        }}
+        dataSource={dataBottom}
         renderItem={(item) => (
           <List.Item>
             <GridItem

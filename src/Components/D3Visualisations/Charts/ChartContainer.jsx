@@ -3,6 +3,8 @@ import { Tooltip, Button, Radio } from "antd";
 import { SyncOutlined } from "@ant-design/icons";
 import useResizeObserver from "../../../Utilities/Hooks/useResizeObserver";
 import BarChart from "./BarChart";
+import LineChart from "./LineChart";
+import ScatterChart from "./ScatterChart";
 import AreaChart from "./AreaChart";
 import ControlContainer from "../Controls/ControlContainer";
 
@@ -12,18 +14,22 @@ const CHART_TYPES = [
     value: "bar",
   },
   {
+    label: "Scatter",
+    value: "scatter",
+  },
+  {
     label: "Area",
     value: "area",
   },
 ];
 
-function ChartContainer() {
+function ChartContainer({ type }) {
   const containerRef = useRef();
   const dimensions = useResizeObserver(containerRef);
   const [width, setWidth] = useState(0);
   const [data, setData] = useState(null);
 
-  const [chartType, setChartType] = useState("bar");
+  const [chartType, setChartType] = useState("line");
 
   const handleClick = () => {
     generateData();
@@ -67,18 +73,31 @@ function ChartContainer() {
           display: "flex",
           justifyContent: "center",
         }}
+        className={"chart-container"}
       >
         {width > 0 && data && (
           <>
-            {chartType === "bar" && (
-              <BarChart data={data} height={400} width={width - 10} />
+            {type === "line" && (
+              <LineChart
+                key={`line_${width}`}
+                data={data}
+                height={400}
+                width={width - 10}
+              />
             )}
-            {chartType === "area" && (
-              <AreaChart data={data} height={400} width={width - 10} />
+
+            {type === "bar" && (
+              <BarChart
+                key={`bar_${width}`}
+                data={data}
+                height={400}
+                width={width - 10}
+              />
             )}
           </>
         )}
       </div>
+
       <ControlContainer>
         <div
           style={{
@@ -87,24 +106,7 @@ function ChartContainer() {
             justifyContent: "space-between",
             width: "175px",
           }}
-        >
-          <Tooltip title={"Update Data"}>
-            <Button
-              onClick={handleClick}
-              shape="circle"
-              icon={<SyncOutlined />}
-            />
-          </Tooltip>
-          <Tooltip title={"Chart Type"}>
-            <Radio.Group
-              options={CHART_TYPES}
-              onChange={handleChange}
-              value={chartType}
-              optionType="button"
-              buttonStyle="solid"
-            />
-          </Tooltip>
-        </div>
+        ></div>
       </ControlContainer>
     </>
   );

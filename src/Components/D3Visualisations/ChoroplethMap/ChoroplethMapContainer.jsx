@@ -30,6 +30,7 @@ const ChoroplethMapContainer = () => {
       >
         {width > 0 && (
           <ChoroplethMap
+            key={`choropleth_${width}`}
             width={width}
             height={400}
             selectedType={selectedType}
