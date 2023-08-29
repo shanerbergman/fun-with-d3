@@ -54,21 +54,6 @@ function ChartContainer({ type, source }) {
           </>
         )}
       </div>
-
-      {source && (
-        <ControlContainer>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: "175px",
-            }}
-          >
-            <div style={{ fontSize: "11px" }}>Data Source: {source}</div>
-          </div>
-        </ControlContainer>
-      )}
     </>
   );
 }

@@ -6,9 +6,9 @@ import ChoroplethMapContainer from "./ChoroplethMap/ChoroplethMapContainer";
 export const VisualsLookupObject = {
   bouncing_ball: () => <BouncingBallContainer />,
   circular_progress_bar: () => <ProgressBarsContainer />,
-  line: () => <ChartContainer type={"line"} source={"Jail Data Initiative"} />,
+  line: () => <ChartContainer type={"line"} />,
   bar: () => <ChartContainer type={"bar"} />,
-  area: () => <ChartContainer type={"area"} source={"Yahoo Finance"} />,
+  area: () => <ChartContainer type={"area"} />,
   map_with_geojson: () => <MapContainer />,
   choropleth_map: () => <ChoroplethMapContainer />,
 };

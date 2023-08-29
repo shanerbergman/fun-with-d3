@@ -1,5 +1,7 @@
 import React, { useRef, useEffect } from "react";
+import { sliderBottom } from "d3-simple-slider";
 import * as d3 from "d3";
+import ControlContainer from "../Controls/ControlContainer";
 
 const AreaChart = ({ width, height }) => {
   const svgRef = useRef();
@@ -112,14 +114,14 @@ const AreaChart = ({ width, height }) => {
       svg
         .append("path")
         .datum(data)
-        .attr("clas", "area")
+        .attr("class", "area-chart-area")
         .attr("d", area)
         .style("fill", "url(#gradient)");
 
       const path = svg
         .append("path")
         .datum(data)
-        .attr("class", "line")
+        .attr("class", "area-chart-line")
         .attr("fill", "none")
         .attr("stroke", "#f7941D")
         .attr("stroke-width", 1)
@@ -152,7 +154,7 @@ const AreaChart = ({ width, height }) => {
       const listeningRect = svg
         .append("rect")
         .attr("class", "listening-rect")
-        .attr("width", width)
+        .attr("width", useableWidth)
         .attr("height", height);
 
       listeningRect.on("mousemove", (event) => {
@@ -209,6 +211,69 @@ const AreaChart = ({ width, height }) => {
         tooltipLineY.style("display", "none");
       });
 
+      // Define the slider
+
+      const slider = sliderBottom()
+        .min(d3.min(data, (d) => d.Date))
+        .max(d3.max(data, (d) => d.Date))
+        .width(300)
+        .tickFormat(d3.timeFormat("%Y-%m-%d"))
+        .ticks(3)
+        .default([d3.min(data, (d) => d.Date), d3.max(data, (d) => d.Date)])
+        .fill("#f7941D");
+
+      slider.on("onchange", (val) => {
+        // Set new domain for x scale
+        x.domain(val);
+
+        // Filter data based on slider values
+        const filteredData = data.filter(
+          (d) => d.Date >= val[0] && d.Date <= val[1]
+        );
+
+        // Update the line and area to new domain
+        svg.select(".area-chart-line").attr("d", line(filteredData));
+        svg.select(".area-chart-area").attr("d", area(filteredData));
+        // Set new domain for y scale based on new data
+        y.domain([0, d3.max(filteredData, (d) => d.Close)]);
+
+        // Update the x-axis with new domain
+        svg
+          .select(".x-axis")
+          .transition()
+          .duration(300) // transition duration in ms
+          .call(
+            d3
+              .axisBottom(x)
+              .tickValues(x.ticks(d3.timeYear.every(1)))
+              .tickFormat(d3.timeFormat("%Y"))
+          );
+
+        // Update the y-axis with new domain
+        svg
+          .select(".y-axis")
+          .transition()
+          .duration(300) // transition duration in ms
+          .call(
+            d3
+              .axisRight(y)
+              .ticks(10)
+              .tickFormat((d) => {
+                if (d <= 0) return "";
+                return `$${d.toFixed(2)}`;
+              })
+          );
+      });
+
+      const gRange = d3
+        .select("#slider-area-chart")
+        .append("svg")
+        .attr("width", 500)
+        .attr("height", 100)
+        .append("g")
+        .attr("transform", "translate(90,30)");
+      gRange.call(slider);
+
       svg
         .append("text")
         .attr("class", "chart-title")
@@ -222,8 +287,22 @@ const AreaChart = ({ width, height }) => {
   }, [width]);
 
   return (
-    <div className="areaDiv">
-      <svg ref={svgRef}></svg>
+    <div>
+      <div className="areaDiv">
+        <svg ref={svgRef}></svg>
+      </div>
+      <ControlContainer>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            width: { width },
+          }}
+        >
+          <div style={{ fontSize: "11px" }}>Data Source: Yahoo Finance</div>
+          <div id="slider-area-chart"></div>
+        </div>
+      </ControlContainer>
     </div>
   );
 };

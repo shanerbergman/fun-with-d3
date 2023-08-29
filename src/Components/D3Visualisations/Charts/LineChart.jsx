@@ -1,5 +1,7 @@
 import React, { useRef, useEffect } from "react";
+import { sliderBottom } from "d3-simple-slider";
 import * as d3 from "d3";
+import ControlContainer from "../Controls/ControlContainer";
 
 const LineChart = ({ width, height }) => {
   const svgRef = useRef();
@@ -120,6 +122,7 @@ const LineChart = ({ width, height }) => {
       svg
         .append("path")
         .datum(data)
+        .attr("class", "line-chart-line")
         .attr("fill", "none")
         .attr("stroke", "steelblue")
         .attr("stroke-width", 1)
@@ -173,6 +176,68 @@ const LineChart = ({ width, height }) => {
         tooltip.style("display", "none");
       });
 
+      const slider = sliderBottom()
+        .min(d3.min(data, (d) => d.date))
+        .max(d3.max(data, (d) => d.date))
+        .width(300)
+        .tickFormat(d3.timeFormat("%Y-%m-%d"))
+        .ticks(3)
+        .default([d3.min(data, (d) => d.date), d3.max(data, (d) => d.date)])
+        .fill("steelblue");
+
+      slider.on("onchange", (val) => {
+        // Set new domain for x scale
+        x.domain(val);
+
+        // Filter data based on slider values
+        const filteredData = data.filter(
+          (d) => d.date >= val[0] && d.date <= val[1]
+        );
+
+        // Update the line and area to new domain
+        svg.select(".line-chart-line").attr("d", line(filteredData));
+
+        // Set new domain for y scale based on new data
+        y.domain([85000, d3.max(filteredData, (d) => d.population)]);
+
+        // Update the x-axis with new domain
+        svg
+          .select(".x-axis")
+          .transition()
+          .duration(300) // transition duration in ms
+          .call(
+            d3
+              .axisBottom(x)
+              .tickValues(x.ticks(d3.timeYear.every(1)))
+              .tickFormat(d3.timeFormat("%Y"))
+          );
+
+        // Update the y-axis with new domain
+        svg
+          .select(".y-axis")
+          .transition()
+          .duration(300) // transition duration in ms
+          .call(
+            d3
+              .axisRight(y)
+              .ticks(10)
+              .tickFormat((d) => {
+                if (d <= 0) return "";
+                return `$${d.toFixed(2)}`;
+              })
+          );
+      });
+
+      const gRange = d3
+        .select("#slider-line-chart")
+        .append("svg")
+        .attr("width", 500)
+        .attr("height", 100)
+        .append("g")
+        .attr("transform", "translate(90,30)");
+
+      gRange.call(slider);
+
       svg
         .append("text")
         .attr("transform", "rotate(-90)")
@@ -197,7 +262,27 @@ const LineChart = ({ width, height }) => {
     });
   }, []);
 
-  return <svg ref={svgRef} className="chart"></svg>;
+  return (
+    <div>
+      <div className="lineDiv">
+        <svg ref={svgRef}></svg>
+      </div>
+      <ControlContainer>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            width: { width },
+          }}
+        >
+          <div style={{ fontSize: "11px" }}>
+            Data Source: Jail Data Initiative
+          </div>
+          <div id="slider-line-chart"></div>
+        </div>
+      </ControlContainer>
+    </div>
+  );
 };
 
 export default LineChart;
