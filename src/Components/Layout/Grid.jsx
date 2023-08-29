@@ -19,12 +19,13 @@ const dataMiddle = [
   {
     title: "Charts - Line",
     id: "line",
-    backgroundImage: "linear-gradient(#2db89a, #00793d)",
+    backgroundImage:
+      "linear-gradient(rgba(70,130,180,.75), rgba(70,130,180,1))",
   },
   {
     title: "Charts - Area",
     id: "area",
-    backgroundImage: "linear-gradient(#2db89a, #00793d)",
+    backgroundImage: "linear-gradient(rgba(247,148,29,.75), #f7941D)",
   },
 
   {

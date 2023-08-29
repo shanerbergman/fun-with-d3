@@ -45,7 +45,8 @@ const BarChart = ({ data, width, height }) => {
         .attr("height", y.bandwidth())
         .attr("x", 0)
         .attr("width", (d) => x(d.total))
-        .style("fill", "steelblue");
+        .style("fill", "#00793d")
+        .style("opacity", 0.5);
 
       const xAxis = d3.axisBottom(x).ticks(5).tickSize(0);
       const yAxis = d3.axisLeft(y).tickSize(0).tickPadding(10);
