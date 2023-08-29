@@ -4,7 +4,7 @@ import BarChart from "./BarChart";
 import LineChart from "./LineChart";
 import AreaChart from "./AreaChart";
 import ControlContainer from "../Controls/ControlContainer";
-import "./Chart.css";
+import "./chart.css";
 
 function ChartContainer({ type, source }) {
   const containerRef = useRef();
