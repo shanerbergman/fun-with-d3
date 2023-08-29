@@ -194,17 +194,6 @@ const LineChart = ({ width, height }) => {
         .style("font-weight", "bold")
         .style("font-family", "sans-serif")
         .text("US Prison Populations");
-
-      // // Add the source credit
-
-      svg
-        .append("text")
-        .attr("class", "source-credit")
-        .attr("x", W - 1125)
-        .attr("y", H + margin.bottom - 3)
-        .style("font-size", "9px")
-        .style("font-family", "sans-serif")
-        .text("Source: jaildatainitiative.org");
     });
   }, []);
 

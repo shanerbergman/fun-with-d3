@@ -6,7 +6,7 @@ import AreaChart from "./AreaChart";
 import ControlContainer from "../Controls/ControlContainer";
 import "./Chart.css";
 
-function ChartContainer({ type }) {
+function ChartContainer({ type, source }) {
   const containerRef = useRef();
   const dimensions = useResizeObserver(containerRef);
   const [width, setWidth] = useState(0);
@@ -55,16 +55,20 @@ function ChartContainer({ type }) {
         )}
       </div>
 
-      <ControlContainer>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            width: "175px",
-          }}
-        ></div>
-      </ControlContainer>
+      {source && (
+        <ControlContainer>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "175px",
+            }}
+          >
+            <div style={{ fontSize: "11px" }}>Data Source: {source}</div>
+          </div>
+        </ControlContainer>
+      )}
     </>
   );
 }

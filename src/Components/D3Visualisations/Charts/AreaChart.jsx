@@ -27,6 +27,28 @@ const AreaChart = ({ width, height }) => {
       .append("div")
       .attr("class", "tooltip");
 
+    const gradient = svg
+      .append("defs")
+      .append("linearGradient")
+      .attr("id", "gradient")
+      .attr("x1", "0%")
+      .attr("x2", "0%")
+      .attr("y1", "0%")
+      .attr("y2", "100%")
+      .attr("spreadMethod", "pad");
+
+    gradient
+      .append("stop")
+      .attr("offset", "0%")
+      .attr("stop-color", "#f7941D")
+      .attr("stop-opacity", 1);
+
+    gradient
+      .append("stop")
+      .attr("offset", "100%")
+      .attr("stop-color", "#f7941D")
+      .attr("stop-opacity", 0);
+
     const x = d3.scaleTime().range([0, useableWidth]);
 
     const y = d3.scaleLinear().range([useableHeight, 0]);
@@ -92,15 +114,14 @@ const AreaChart = ({ width, height }) => {
         .datum(data)
         .attr("clas", "area")
         .attr("d", area)
-        .style("fill", "steelblue")
-        .style("opacity", 0.45);
+        .style("fill", "url(#gradient)");
 
       const path = svg
         .append("path")
         .datum(data)
         .attr("class", "line")
         .attr("fill", "none")
-        .attr("stroke", "steelblue")
+        .attr("stroke", "#f7941D")
         .attr("stroke-width", 1)
         .attr("d", line);
 
@@ -144,7 +165,7 @@ const AreaChart = ({ width, height }) => {
         const d = x0 - d0.Date > d1.Date - x0 ? d1 : d0;
         const xPos = x(d.Date);
         const yPos = y(d.Close);
-        console.log(xPos, yPos);
+
         circle.attr("cx", xPos).attr("cy", yPos);
         circle.transition().duration(50).attr("r", 5);
 
@@ -197,17 +218,6 @@ const AreaChart = ({ width, height }) => {
         .style("font-weight", "bold")
         .style("font-family", "sans-serif")
         .text("Bitcoin Price (USD)");
-
-      // Add the source credit
-
-      svg
-        .append("text")
-        .attr("class", "source-credit")
-        .attr("x", width - 110)
-        .attr("y", height + margin.bottom - 7)
-        .style("font-size", "12px")
-        .style("font-family", "sans-serif")
-        .text("Source: Yahoo Finance");
     });
   }, [width]);
 
