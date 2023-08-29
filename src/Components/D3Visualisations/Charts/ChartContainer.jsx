@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Tooltip, Button, Radio } from "antd";
-import { SyncOutlined } from "@ant-design/icons";
 import useResizeObserver from "../../../Utilities/Hooks/useResizeObserver";
 import BarChart from "./BarChart";
 import LineChart from "./LineChart";
-import ScatterChart from "./ScatterChart";
 import AreaChart from "./AreaChart";
 import ControlContainer from "../Controls/ControlContainer";
+import "./Chart.css";
 
 function ChartContainer({ type }) {
   const containerRef = useRef();

@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from "react";
 import * as d3 from "d3";
-import "./chart.css";
 
 const LineChart = ({ width, height }) => {
   const svgRef = useRef();
@@ -136,7 +135,7 @@ const LineChart = ({ width, height }) => {
 
       const listeningRect = svg
         .append("rect")
-        .attr("class", "rect")
+        .attr("class", "listening-rect")
         .attr("width", W)
         .attr("height", H);
 

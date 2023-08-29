@@ -125,12 +125,7 @@ const BarChart = ({ data, width, height }) => {
     });
   }, [width]);
 
-  return (
-    <svg ref={svgRef}>
-      <g className="x-axis" />
-      <g className="y-axis" />
-    </svg>
-  );
+  return <svg ref={svgRef}></svg>;
 };
 
 export default BarChart;
