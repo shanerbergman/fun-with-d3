@@ -46,6 +46,7 @@ const LineChart = ({ width, height }) => {
       svg
         .append("g")
         .attr("transform", `translate(0,${H})`)
+        .attr("class", "x-axis")
         .style("font-size", "14px")
         .call(
           d3
@@ -61,6 +62,7 @@ const LineChart = ({ width, height }) => {
       // Add the y-axis
       svg
         .append("g")
+        .attr("class", "y-axis")
         .style("font-size", "14px")
         .call(
           d3
@@ -219,11 +221,11 @@ const LineChart = ({ width, height }) => {
           .duration(300) // transition duration in ms
           .call(
             d3
-              .axisRight(y)
-              .ticks(10)
+              .axisLeft(y)
+              .tickSize(0)
+              .tickPadding(5)
               .tickFormat((d) => {
-                if (d <= 0) return "";
-                return `$${d.toFixed(2)}`;
+                return `${(d / 1000).toFixed(0)}k`;
               })
           );
       });

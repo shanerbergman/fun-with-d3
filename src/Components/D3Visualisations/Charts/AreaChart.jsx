@@ -68,6 +68,7 @@ const AreaChart = ({ width, height }) => {
       svg
         .append("g")
         .attr("transform", `translate(0, ${useableHeight})`)
+        .attr("class", "x-axis")
         .style("font-size", "14px")
         .call(
           d3
@@ -83,6 +84,7 @@ const AreaChart = ({ width, height }) => {
       svg
         .append("g")
         .attr("transform", `translate(${useableWidth}, 0)`)
+        .attr("class", "y-axis")
         .style("font-size", "14px")
         .call(
           d3
