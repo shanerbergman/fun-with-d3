@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Tooltip, Button } from "antd";
 import useResizeObserver from "../../../Utilities/Hooks/useResizeObserver";
 import Map from "./Map";
-import ControlContainer from "../Controls/ControlContainer";
 
 const MapContainer = () => {
   const containerRef = useRef();
@@ -11,29 +9,21 @@ const MapContainer = () => {
   const [stateInfo, setStateInfo] = useState(null);
 
   useEffect(() => {
-    if (dimensions) {
-      const { width } = dimensions;
-      setWidth(width);
-    }
+    if (dimensions) setWidth(dimensions.width);
   }, [dimensions]);
+
   return (
     <>
-      <div
-        ref={containerRef}
-        style={{
-          minHeight: "400px",
-          width: "100%",
-        }}
-      >
+      <div className="viz-card__body map-body" ref={containerRef}>
         {width > 0 && (
-          <Map width={width} height={400} setStateInfo={setStateInfo} />
+          <Map width={width} height={340} setStateInfo={setStateInfo} />
         )}
       </div>
-      <ControlContainer>
-        <div style={{ height: "32px" }}>
-          {stateInfo ? stateInfo : "Hover over state for State Name"}
-        </div>
-      </ControlContainer>
+      <div className="viz-card__foot">
+        <span className={`readout${stateInfo ? "" : " readout--empty"}`}>
+          {stateInfo || "Hover a state for its name"}
+        </span>
+      </div>
     </>
   );
 };

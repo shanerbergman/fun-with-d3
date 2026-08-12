@@ -1,9 +1,10 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
-import { Tooltip, Button, InputNumber } from "antd";
-import { CaretRightOutlined, PauseOutlined } from "@ant-design/icons";
+import React, { useState, useEffect, useRef } from "react";
 import useResizeObserver from "../../../Utilities/Hooks/useResizeObserver";
 import BouncingBall from "./BouncingBall";
-import ControlContainer from "../Controls/ControlContainer";
+import Button, { PlayIcon, PauseIcon } from "../../UI/Button";
+import Slider from "../../UI/Slider";
+
+const CANVAS_HEIGHT = 340;
 
 const BouncingBallContainer = () => {
   const containerRef = useRef();
@@ -11,76 +12,49 @@ const BouncingBallContainer = () => {
   const [width, setWidth] = useState(0);
 
   const [bounceBall, setBounceBall] = useState(false);
-  const [ballCount, setBallCount] = useState(10);
+  const [ballCount, setBallCount] = useState(12);
 
-  const handleClick = () => {
-    setBounceBall(!bounceBall);
-  };
+  const handleClick = () => setBounceBall((running) => !running);
 
-  const handleCountChange = (e) => {
-    if (bounceBall) {
-      setBounceBall(false);
-    }
-
-    setBallCount(e);
+  const handleCountChange = (value) => {
+    setBounceBall(false);
+    setBallCount(value);
   };
 
   useEffect(() => {
-    if (dimensions) {
-      const { width } = dimensions;
-      setWidth(width);
-    }
+    if (dimensions) setWidth(dimensions.width);
   }, [dimensions]);
 
   return (
     <>
-      <div
-        ref={containerRef}
-        style={{
-          minHeight: "200px",
-          width: "100%",
-        }}
-      >
+      <div className="viz-card__body" ref={containerRef}>
         {width > 0 && (
           <BouncingBall
             bounceBall={bounceBall}
             width={width}
-            height={400 - 5}
+            height={CANVAS_HEIGHT}
             ballCount={ballCount}
-            max_h={400 - 100}
+            max_h={CANVAS_HEIGHT - 40}
             max_w={width - 30}
           />
         )}
       </div>
-      <ControlContainer>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            width: "175px",
-          }}
+      <div className="viz-card__foot">
+        <Button
+          onClick={handleClick}
+          icon={bounceBall ? <PauseIcon /> : <PlayIcon />}
+          aria-label={bounceBall ? "Pause bouncing" : "Start bouncing"}
         >
-          <Tooltip title={bounceBall ? "Pause Bouncing" : "Start Bouncing"}>
-            <Button
-              onClick={handleClick}
-              shape="circle"
-              icon={bounceBall ? <PauseOutlined /> : <CaretRightOutlined />}
-            />
-          </Tooltip>
-          <Tooltip title={"Change Ball Count"}>
-            <InputNumber
-              onChange={handleCountChange}
-              min={1}
-              max={50}
-              value={ballCount}
-              onKeyDown={(event) => {
-                event.preventDefault();
-              }}
-            />
-          </Tooltip>
-        </div>
-      </ControlContainer>
+          {bounceBall ? "Pause" : "Play"}
+        </Button>
+        <Slider
+          label="Balls"
+          min={3}
+          max={40}
+          value={ballCount}
+          onChange={handleCountChange}
+        />
+      </div>
     </>
   );
 };

@@ -1,73 +1,39 @@
 import React from "react";
-const Defs = () => {
-  return (
-    <defs>
-      <linearGradient id="1" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" style={{ stopColor: "#bdc3c7", stopOpacity: 1 }} />
-        <stop
-          offset="100%"
-          style={{ stopColor: "#2c3e50", stopOpacity: 0.5 }}
-        />
+
+/**
+ * Ball fills, drawn from the site palette rather than the old neon set.
+ * Each pair is [from, to] for a left-to-right linear gradient; the trailing
+ * stop fades so overlapping balls read as translucent glass.
+ */
+const RAMPS = [
+  ["#b33a21", "#e0703f"], // accent → ember
+  ["#3e6ea8", "#8fb0d4"], // cool
+  ["#8c5a7a", "#c9a4b8"], // plum
+  ["#4e8a5c", "#a8c9a4"], // green
+  ["#c4b49b", "#ede4d2"], // sand
+  ["#6f675d", "#b9b1a6"], // stone
+  ["#e0703f", "#f0c9a0"], // ember → clay
+  ["#171412", "#6f675d"], // ink
+  ["#b33a21", "#8c5a7a"], // accent → plum
+  ["#3e6ea8", "#4e8a5c"], // cool → green
+];
+
+const Defs = () => (
+  <defs>
+    {RAMPS.map(([from, to], index) => (
+      <linearGradient
+        key={index}
+        id={`${index + 1}`}
+        x1="0%"
+        y1="0%"
+        x2="100%"
+        y2="100%"
+      >
+        <stop offset="0%" stopColor={from} stopOpacity={0.85} />
+        <stop offset="100%" stopColor={to} stopOpacity={0.55} />
       </linearGradient>
-      <linearGradient id="2" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" style={{ stopColor: "#42275a", stopOpacity: 1 }} />
-        <stop
-          offset="100%"
-          style={{ stopColor: "#734b6d", stopOpacity: 0.5 }}
-        />
-      </linearGradient>
-      <linearGradient id="3" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" style={{ stopColor: "#cc2b5e", stopOpacity: 1 }} />
-        <stop
-          offset="100%"
-          style={{ stopColor: "#753a88", stopOpacity: 0.5 }}
-        />
-      </linearGradient>
-      <linearGradient id="4" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" style={{ stopColor: "#2193b0", stopOpacity: 1 }} />
-        <stop offset="100%" style={{ stopColor: "#6dd5ed", stopOpacity: 1 }} />
-      </linearGradient>
-      <linearGradient id="5" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" style={{ stopColor: "#ffafbd", stopOpacity: 1 }} />
-        <stop offset="100%" style={{ stopColor: "#ffc3a0", stopOpacity: 1 }} />
-      </linearGradient>
-      <linearGradient id="6" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" style={{ stopColor: "#2EB62C", stopOpacity: 1 }} />
-        <stop
-          offset="100%"
-          style={{ stopColor: "#ABE098", stopOpacity: 0.5 }}
-        />
-      </linearGradient>
-      <linearGradient id="7" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" style={{ stopColor: "#EC9F05", stopOpacity: 1 }} />
-        <stop
-          offset="100%"
-          style={{ stopColor: "#FF4E00", stopOpacity: 0.5 }}
-        />
-      </linearGradient>
-      <linearGradient id="8" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" style={{ stopColor: "#d63230", stopOpacity: 1 }} />
-        <stop
-          offset="100%"
-          style={{ stopColor: "#97cc04", stopOpacity: 0.5 }}
-        />
-      </linearGradient>
-      <linearGradient id="9" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" style={{ stopColor: "#C59169", stopOpacity: 1 }} />
-        <stop
-          offset="100%"
-          style={{ stopColor: "#D82020", stopOpacity: 0.5 }}
-        />
-      </linearGradient>
-      <linearGradient id="10" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" style={{ stopColor: "#380036", stopOpacity: 1 }} />
-        <stop
-          offset="100%"
-          style={{ stopColor: "#0CBABA", stopOpacity: 0.5 }}
-        />
-      </linearGradient>
-    </defs>
-  );
-};
+    ))}
+  </defs>
+);
 
 export default Defs;

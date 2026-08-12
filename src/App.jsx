@@ -1,12 +1,8 @@
-import "./App.css";
+import "./styles/theme.css";
 import AppLayout from "./Components/Layout/AppLayout";
 
 function App() {
-  return (
-    <div className="App">
-      <AppLayout />
-    </div>
-  );
+  return <AppLayout />;
 }
 
 export default App;

@@ -1,119 +1,71 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Tooltip, Button } from "antd";
-import { CaretRightOutlined, PauseOutlined } from "@ant-design/icons";
-import * as d3 from "d3";
-import useResizeObserver from "../../../Utilities/Hooks/useResizeObserver";
-
+import React, { useState } from "react";
 import CircularProgress from "./CircularProgress";
-import CircularProgress2 from "./CircularProgress2";
-import ControlContainer from "../Controls/ControlContainer";
 import AnimationFrame from "./AnimationFrame";
+import Button, { PlayIcon, PauseIcon } from "../../UI/Button";
+
+/** 25s sweep at 250ms per percentage point. */
+const CYCLE_MS = 25000;
+const MS_PER_PERCENT = 250;
 
 const ProgressBarsContainer = () => {
-  const containerRef = useRef();
-  const dimensions = useResizeObserver(containerRef);
-  const [width, setWidth] = useState(0);
-
   const [start, setStart] = useState(false);
-  const [progressPercentage, setProgressPercentage] = useState(1);
-  const [progressPercentage2, setProgressPercentage2] = useState(100);
 
-  const handleClick = () => setStart(!start);
-
-  function loop() {
-    let per = progressPercentage;
-    let per2 = progressPercentage2;
-    console.log("loop", per, per2);
-
-    if (per > 99) {
-      per = 1;
-    } else {
-      per = per + 0.1;
-    }
-
-    if (per2 < 1) {
-      per2 = 100;
-    } else {
-      per2 = per2 - 0.1;
-    }
-
-    setProgressPercentage(per);
-    setProgressPercentage2(per2);
-  }
-
-  useEffect(() => {
-    if (dimensions) {
-      const { width } = dimensions;
-      setWidth(width);
-    }
-  }, [dimensions]);
+  const handleClick = () => setStart((running) => !running);
 
   return (
     <>
-      <div
-        ref={containerRef}
-        style={{
-          minHeight: "400px",
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div>
-          {width > 0 && (
-            <AnimationFrame autostart={start}>
-              {({ time }) => {
-                const t = time.fromStart / 250;
-
-                return (
-                  <CircularProgress
-                    height={200}
-                    width={200}
-                    progressPercentage={t}
-                  />
-                );
-              }}
-            </AnimationFrame>
+      <div className="viz-card__body progress-body">
+        <AnimationFrame autostart={start}>
+          {({ time }) => (
+            <CircularProgress
+              progressPercentage={time.fromStart / MS_PER_PERCENT}
+              gradientId="progress-up"
+              caption="Filling"
+            >
+              <linearGradient id="progress-up" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="var(--accent)" />
+                <stop offset="100%" stopColor="var(--accent-ember)" />
+              </linearGradient>
+            </CircularProgress>
           )}
+        </AnimationFrame>
 
-          {width > 0 && (
-            <AnimationFrame autostart={start}>
-              {({ time }) => {
-                const t = (25000 - time.fromStart) / 250;
-
-                return (
-                  <CircularProgress2
-                    width={200}
-                    height={200}
-                    progressPercentage={t}
-                  />
-                );
-              }}
-            </AnimationFrame>
+        <AnimationFrame autostart={start}>
+          {({ time }) => (
+            <CircularProgress
+              progressPercentage={(CYCLE_MS - time.fromStart) / MS_PER_PERCENT}
+              gradientId="progress-down"
+              caption="Draining"
+            >
+              <linearGradient
+                id="progress-down"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="0%"
+              >
+                <stop offset="0%" stopColor="var(--accent)" />
+                <stop offset="50%" stopColor="var(--accent-sand)" />
+                <stop offset="100%" stopColor="var(--accent-green)" />
+              </linearGradient>
+            </CircularProgress>
           )}
-        </div>
+        </AnimationFrame>
       </div>
-      <ControlContainer>
-        <Tooltip title={start ? "Pause Progress" : "Start Progress"}>
-          <Button
-            onClick={handleClick}
-            shape="circle"
-            icon={start ? <PauseOutlined /> : <CaretRightOutlined />}
-          />
-        </Tooltip>
-      </ControlContainer>
+      <div className="viz-card__foot">
+        <Button
+          onClick={handleClick}
+          icon={start ? <PauseIcon /> : <PlayIcon />}
+          aria-label={start ? "Pause progress" : "Start progress"}
+        >
+          {start ? "Pause" : "Run"}
+        </Button>
+        <span className="viz-card__note">
+          Stroke hue interpolates red → green across the sweep
+        </span>
+      </div>
     </>
   );
 };
 
 export default ProgressBarsContainer;
-
-/*
-<Plot
-                  functions={[(x) => Math.sin(3 * x) * Math.sin(t / 2), (x) => Math.sin(2 * x) * Math.sin(t / 3)]}
-                  range={{ x: [0, Math.PI], y: [-1, 1] }}
-                  height={200}
-                  strokeWidth={4}
-                  hideXAxis={true}
-              />*/

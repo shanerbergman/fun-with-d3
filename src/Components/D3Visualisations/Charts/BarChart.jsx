@@ -5,7 +5,7 @@ const BarChart = ({ data, width, height }) => {
   const svgRef = useRef();
 
   useEffect(() => {
-    const margin = { top: 60, right: 30, bottom: 40, left: 70 };
+    const margin = { top: 24, right: 40, bottom: 56, left: 120 };
     const useableWidth = width - margin.left - margin.right;
     const useableHeight = height - margin.top - margin.bottom;
 
@@ -45,8 +45,8 @@ const BarChart = ({ data, width, height }) => {
         .attr("height", y.bandwidth())
         .attr("x", 0)
         .attr("width", (d) => x(d.total))
-        .style("fill", "#00793d")
-        .style("opacity", 0.5);
+        .style("fill", "#3e6ea8")
+        .style("opacity", 0.62);
 
       const xAxis = d3.axisBottom(x).ticks(5).tickSize(0);
       const yAxis = d3.axisLeft(y).tickSize(0).tickPadding(10);
@@ -54,7 +54,7 @@ const BarChart = ({ data, width, height }) => {
       svg
         .append("g")
         .attr("class", "x axis")
-        .style("font-size", "10px")
+        .style("font-size", "11px")
         .attr("transform", `translate(0, ${useableHeight})`)
         .call(xAxis)
         .call((g) => g.select(".domain").remove());
@@ -62,7 +62,7 @@ const BarChart = ({ data, width, height }) => {
       svg
         .append("g")
         .attr("class", "y axis")
-        .style("font-size", "8px")
+        .style("font-size", "10px")
         .call(yAxis)
         .selectAll("path")
         .style("stroke-width", "1.75px");
@@ -79,7 +79,7 @@ const BarChart = ({ data, width, height }) => {
         .attr("y1", 0)
         .attr("x2", (d) => x(d))
         .attr("y2", useableHeight)
-        .style("stroke", "#e0e0e0")
+        .style("stroke", "#eae3d6")
         .style("stroke-width", 0.5)
         .style("stroke-dasharray", "3 3");
 
@@ -92,9 +92,9 @@ const BarChart = ({ data, width, height }) => {
         .attr("y", (d) => y(d.type) + y.bandwidth() / 2)
         .attr("dy", ".35em")
         .style("font-size", "10px")
-        .style("font-family", "sans-serif")
+        .style("font-family", "IBM Plex Mono, monospace")
         .style("font-weight", "bold")
-        .style("fill", "#3c3d28")
+        .style("fill", "#171412")
         .text((d) => d.total);
 
       svg
@@ -109,20 +109,12 @@ const BarChart = ({ data, width, height }) => {
         )
         .style("text-anchor", "middle")
         .style("font-size", "10px")
-        .style("font-family", "sans-serif")
-        .style("fill", "black")
+        .style("font-family", "IBM Plex Mono, monospace")
+        .style("fill", "#8a8177")
+        .style("letter-spacing", "0.12em")
         .attr("dy", "1.5em")
-        .text("Total Sold");
+        .text("TOTAL SOLD");
 
-      svg
-        .append("text")
-        .attr("x", margin.left - 120)
-        .attr("y", margin.top - 100)
-        .style("font-size", "24px")
-        .style("font-weight", "bold")
-        .style("font-family", "sans-serif")
-        .style("fill", "black")
-        .text("Widgets Sold");
     });
   }, [width]);
 

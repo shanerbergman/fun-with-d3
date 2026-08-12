@@ -1,71 +1,65 @@
 import React from "react";
 import * as d3 from "d3";
 
-const CircularProgress = ({ width, height, progressPercentage }) => {
-  const svgWidth = 150;
-  const arcWidth = 12;
-
-  const arcOuterRadius = svgWidth / 2;
-  const arcInnerRadius = svgWidth / 2 - arcWidth;
+/**
+ * Shared ring. `gradientId` selects which <linearGradient> paints the sweep;
+ * the caller owns the def so two rings can sit side by side with
+ * different ramps.
+ */
+const CircularProgress = ({
+  width = 220,
+  height = 260,
+  progressPercentage,
+  gradientId,
+  caption,
+  children,
+}) => {
+  const ringWidth = 170;
+  const arcWidth = 16;
 
   const arcGenerator = d3
     .arc()
-    .innerRadius(arcInnerRadius)
-    .outerRadius(arcOuterRadius)
+    .innerRadius(ringWidth / 2 - arcWidth)
+    .outerRadius(ringWidth / 2)
     .startAngle(0)
-    .cornerRadius(5);
+    .cornerRadius(8);
 
-  const progressArc = (value) =>
-    arcGenerator({
-      endAngle: 2 * Math.PI * value,
-    });
+  const progressArc = (value) => arcGenerator({ endAngle: 2 * Math.PI * value });
+
+  const clamped = Math.max(0, Math.min(100, progressPercentage));
+  const cx = width / 2;
+  const cy = height / 2 - 8;
 
   return (
-    <>
-      <svg width={width} height={height}>
-        <defs>
-          <linearGradient id="line1" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop
-              offset="0%"
-              style={{ stopColor: "#952f4c", stopOpacity: 1 }}
-            />
-            <stop
-              offset="25%"
-              style={{ stopColor: "#952f4c", stopOpacity: 0.75 }}
-            />
-            <stop
-              offset="50%"
-              style={{ stopColor: "#952f4c", stopOpacity: 0.5 }}
-            />
-            <stop
-              offset="100%"
-              style={{ stopColor: "#3e1a51", stopOpacity: 0.25 }}
-            />
-          </linearGradient>
-        </defs>
-        <circle
-          cx="0"
-          cy="0"
-          r="90"
-          transform={`translate(${width / 2}, ${height / 2})`}
-          fill="white"
-          stroke="gray"
-          strokeWidth="1"
-        />
-        <g transform={`translate(${width / 2}, ${height / 2})`}>
-          <path d={progressArc(1)} opacity="0.2" fill="gray" />
-        </g>
-        <g transform={`translate(${width / 2}, ${height / 2})`}>
-          <path
-            d={progressArc(progressPercentage / 100)}
-            fill={`url(#line1)`}
-          />
-          <text x="-10" y="5">
-            {`${progressPercentage.toFixed(0)}%`}
-          </text>
-        </g>
-      </svg>
-    </>
+    <svg width={width} height={height} role="img">
+      <defs>{children}</defs>
+      <g transform={`translate(${cx}, ${cy})`}>
+        <path d={progressArc(1)} fill="var(--track)" />
+        <path d={progressArc(clamped / 100)} fill={`url(#${gradientId})`} />
+        <text
+          textAnchor="middle"
+          dy="0.34em"
+          fontFamily="var(--font-serif)"
+          fontSize="42"
+          fill="var(--ink)"
+        >
+          {`${clamped.toFixed(0)}%`}
+        </text>
+      </g>
+      {caption && (
+        <text
+          x={cx}
+          y={height - 8}
+          textAnchor="middle"
+          fontFamily="var(--font-mono)"
+          fontSize="10"
+          letterSpacing="0.12em"
+          fill="var(--muted-2)"
+        >
+          {caption.toUpperCase()}
+        </text>
+      )}
+    </svg>
   );
 };
 

@@ -1,13 +1,12 @@
 import React, { useRef, useEffect } from "react";
 import { sliderBottom } from "d3-simple-slider";
 import * as d3 from "d3";
-import ControlContainer from "../Controls/ControlContainer";
 
 const AreaChart = ({ width, height }) => {
   const svgRef = useRef();
 
   useEffect(() => {
-    const margin = { top: 60, right: 70, bottom: 40, left: 70 };
+    const margin = { top: 24, right: 72, bottom: 44, left: 72 };
     const useableWidth = width - margin.left - margin.right;
     const useableHeight = height - margin.top - margin.bottom;
 
@@ -42,14 +41,14 @@ const AreaChart = ({ width, height }) => {
     gradient
       .append("stop")
       .attr("offset", "0%")
-      .attr("stop-color", "#f7941D")
-      .attr("stop-opacity", 1);
+      .attr("stop-color", "#b33a21")
+      .attr("stop-opacity", 0.42);
 
     gradient
       .append("stop")
       .attr("offset", "100%")
-      .attr("stop-color", "#f7941D")
-      .attr("stop-opacity", 0);
+      .attr("stop-color", "#b33a21")
+      .attr("stop-opacity", 0.02);
 
     const x = d3.scaleTime().range([0, useableWidth]);
 
@@ -69,7 +68,7 @@ const AreaChart = ({ width, height }) => {
         .append("g")
         .attr("transform", `translate(0, ${useableHeight})`)
         .attr("class", "x-axis")
-        .style("font-size", "14px")
+        .style("font-size", "11px")
         .call(
           d3
             .axisBottom(x)
@@ -85,7 +84,7 @@ const AreaChart = ({ width, height }) => {
         .append("g")
         .attr("transform", `translate(${useableWidth}, 0)`)
         .attr("class", "y-axis")
-        .style("font-size", "14px")
+        .style("font-size", "11px")
         .call(
           d3
             .axisRight(y)
@@ -98,7 +97,10 @@ const AreaChart = ({ width, height }) => {
                 .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
             })
         );
-      svg.selectAll(".tick text").attr("fill", "#777");
+      svg
+        .selectAll(".tick text")
+        .attr("fill", "#8a8177")
+        .style("font-family", "IBM Plex Mono, monospace");
       // create line
       const line = d3
         .line()
@@ -125,15 +127,15 @@ const AreaChart = ({ width, height }) => {
         .datum(data)
         .attr("class", "area-chart-line")
         .attr("fill", "none")
-        .attr("stroke", "#f7941D")
+        .attr("stroke", "#b33a21")
         .attr("stroke-width", 1)
         .attr("d", line);
 
       const circle = svg
         .append("circle")
         .attr("r", 0)
-        .attr("fill", "red")
-        .style("stroke", "white")
+        .attr("fill", "#b33a21")
+        .style("stroke", "#fdfcfa")
         .attr("opacity", 0.7)
         .style("pointer-events", "none");
 
@@ -141,7 +143,7 @@ const AreaChart = ({ width, height }) => {
         .append("line")
         .attr("class", "tooltip-line")
         .attr("id", "tooltip-line-x")
-        .attr("stroke", "red")
+        .attr("stroke", "#171412")
         .attr("stroke-width", 1)
         .attr("stroke-dasharray", "2,2");
 
@@ -149,7 +151,7 @@ const AreaChart = ({ width, height }) => {
         .append("line")
         .attr("class", "tooltip-line")
         .attr("id", "tooltip-line-y")
-        .attr("stroke", "red")
+        .attr("stroke", "#171412")
         .attr("stroke-width", 1)
         .attr("stroke-dasharray", "2,2");
 
@@ -222,7 +224,7 @@ const AreaChart = ({ width, height }) => {
         .tickFormat(d3.timeFormat("%Y-%m-%d"))
         .ticks(3)
         .default([d3.min(data, (d) => d.Date), d3.max(data, (d) => d.Date)])
-        .fill("#f7941D");
+        .fill("#b33a21");
 
       slider.on("onchange", (val) => {
         // Set new domain for x scale
@@ -276,35 +278,12 @@ const AreaChart = ({ width, height }) => {
         .attr("transform", "translate(90,30)");
       gRange.call(slider);
 
-      svg
-        .append("text")
-        .attr("class", "chart-title")
-        .attr("x", margin.left - 115)
-        .attr("y", margin.top - 100)
-        .style("font-size", "20px")
-        .style("font-weight", "bold")
-        .style("font-family", "sans-serif")
-        .text("Bitcoin Price (USD)");
     });
   }, [width]);
 
   return (
-    <div>
-      <div className="areaDiv">
-        <svg ref={svgRef}></svg>
-      </div>
-      <ControlContainer>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            width: { width },
-          }}
-        >
-          <div style={{ fontSize: "11px" }}>Data Source: Yahoo Finance</div>
-          <div id="slider-area-chart"></div>
-        </div>
-      </ControlContainer>
+    <div className="areaDiv">
+      <svg ref={svgRef}></svg>
     </div>
   );
 };

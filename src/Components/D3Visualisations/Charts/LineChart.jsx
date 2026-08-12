@@ -1,13 +1,12 @@
 import React, { useRef, useEffect } from "react";
 import { sliderBottom } from "d3-simple-slider";
 import * as d3 from "d3";
-import ControlContainer from "../Controls/ControlContainer";
 
 const LineChart = ({ width, height }) => {
   const svgRef = useRef();
 
   useEffect(() => {
-    const margin = { top: 60, right: 30, bottom: 40, left: 60 };
+    const margin = { top: 24, right: 30, bottom: 44, left: 68 };
     const W = width - margin.left - margin.right;
     const H = height - margin.top - margin.bottom;
 
@@ -21,7 +20,7 @@ const LineChart = ({ width, height }) => {
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
     const tooltip = d3
-      .select(".chart-container")
+      .select(".lineDiv")
       .append("div")
       .attr("class", "tooltip");
 
@@ -47,7 +46,7 @@ const LineChart = ({ width, height }) => {
         .append("g")
         .attr("transform", `translate(0,${H})`)
         .attr("class", "x-axis")
-        .style("font-size", "14px")
+        .style("font-size", "11px")
         .call(
           d3
             .axisBottom(x)
@@ -57,13 +56,16 @@ const LineChart = ({ width, height }) => {
         .call((g) => g.select(".domain").remove())
         .selectAll(".tick line")
         .style("stroke-opacity", 0);
-      svg.selectAll(".tick text").attr("fill", "#777");
+      svg
+        .selectAll(".tick text")
+        .attr("fill", "#8a8177")
+        .style("font-family", "IBM Plex Mono, monospace");
 
       // Add the y-axis
       svg
         .append("g")
         .attr("class", "y-axis")
-        .style("font-size", "14px")
+        .style("font-size", "11px")
         .call(
           d3
             .axisLeft(y)
@@ -76,7 +78,8 @@ const LineChart = ({ width, height }) => {
         )
         .call((g) => g.select(".domain").remove())
         .selectAll(".tick text")
-        .style("fill", "#777")
+        .style("fill", "#8a8177")
+        .style("font-family", "IBM Plex Mono, monospace")
         .style("visibility", (d, i, nodes) => {
           if (i === 0) {
             return "hidden";
@@ -94,7 +97,7 @@ const LineChart = ({ width, height }) => {
         .attr("x2", (d) => x(d))
         .attr("y1", 0)
         .attr("y2", H)
-        .attr("stroke", "#e0e0e0")
+        .attr("stroke", "#eae3d6")
         .attr("stroke-width", 0.5);
 
       // // Add horizontal gridlines
@@ -109,7 +112,7 @@ const LineChart = ({ width, height }) => {
         .attr("x2", W)
         .attr("y1", (d) => y(d))
         .attr("y2", (d) => y(d))
-        .attr("stroke", "#e0e0e0")
+        .attr("stroke", "#eae3d6")
         .attr("stroke-width", 0.5);
 
       // Create the line generator
@@ -126,15 +129,15 @@ const LineChart = ({ width, height }) => {
         .datum(data)
         .attr("class", "line-chart-line")
         .attr("fill", "none")
-        .attr("stroke", "steelblue")
+        .attr("stroke", "#3e6ea8")
         .attr("stroke-width", 1)
         .attr("d", line);
 
       const circle = svg
         .append("circle")
         .attr("r", 0)
-        .attr("fill", "steelblue")
-        .style("stroke", "white")
+        .attr("fill", "#3e6ea8")
+        .style("stroke", "#fdfcfa")
         .attr("opacity", 0.7)
         .style("pointer-events", "none");
 
@@ -185,7 +188,7 @@ const LineChart = ({ width, height }) => {
         .tickFormat(d3.timeFormat("%Y-%m-%d"))
         .ticks(3)
         .default([d3.min(data, (d) => d.date), d3.max(data, (d) => d.date)])
-        .fill("steelblue");
+        .fill("#3e6ea8");
 
       slider.on("onchange", (val) => {
         // Set new domain for x scale
@@ -247,42 +250,18 @@ const LineChart = ({ width, height }) => {
         .attr("x", 0 - H / 2)
         .attr("dy", "1em")
         .style("text-anchor", "middle")
-        .style("font-size", "14px")
-        .style("fill", "#777")
-        .style("font-family", "sans-serif")
-        .text("Total Population");
+        .style("font-size", "10px")
+        .style("letter-spacing", "0.12em")
+        .style("fill", "#8a8177")
+        .style("font-family", "IBM Plex Mono, monospace")
+        .text("TOTAL POPULATION");
 
-      svg
-        .append("text")
-        .attr("class", "chart-title")
-        .attr("x", margin.left - 115)
-        .attr("y", margin.top - 100)
-        .style("font-size", "24px")
-        .style("font-weight", "bold")
-        .style("font-family", "sans-serif")
-        .text("US Prison Populations");
     });
   }, []);
 
   return (
-    <div>
-      <div className="lineDiv">
-        <svg ref={svgRef}></svg>
-      </div>
-      <ControlContainer>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            width: { width },
-          }}
-        >
-          <div style={{ fontSize: "11px" }}>
-            Data Source: Jail Data Initiative
-          </div>
-          <div id="slider-line-chart"></div>
-        </div>
-      </ControlContainer>
+    <div className="lineDiv">
+      <svg ref={svgRef}></svg>
     </div>
   );
 };
