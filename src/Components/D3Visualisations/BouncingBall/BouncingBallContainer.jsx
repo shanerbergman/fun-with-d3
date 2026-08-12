@@ -1,59 +1,60 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import useResizeObserver from "../../../Utilities/Hooks/useResizeObserver";
 import BouncingBall from "./BouncingBall";
 import Button, { PlayIcon, PauseIcon } from "../../UI/Button";
 import Slider from "../../UI/Slider";
 
 const CANVAS_HEIGHT = 340;
+const MIN_BALLS = 1;
+const MAX_BALLS = 100;
 
 const BouncingBallContainer = () => {
   const containerRef = useRef();
   const dimensions = useResizeObserver(containerRef);
   const [width, setWidth] = useState(0);
 
-  const [bounceBall, setBounceBall] = useState(false);
-  const [ballCount, setBallCount] = useState(12);
-
-  const handleClick = () => setBounceBall((running) => !running);
-
-  const handleCountChange = (value) => {
-    setBounceBall(false);
-    setBallCount(value);
-  };
+  const [running, setRunning] = useState(true);
+  const [ballCount, setBallCount] = useState(14);
+  const [impacts, setImpacts] = useState(0);
 
   useEffect(() => {
     if (dimensions) setWidth(dimensions.width);
   }, [dimensions]);
 
+  // Stable identity: the simulation only reads this once, at mount.
+  const handleImpact = useCallback((total) => setImpacts(total), []);
+
   return (
     <>
-      <div className="viz-card__body" ref={containerRef}>
+      <div className="viz-card__body ball-pit" ref={containerRef}>
         {width > 0 && (
           <BouncingBall
-            bounceBall={bounceBall}
             width={width}
             height={CANVAS_HEIGHT}
+            running={running}
             ballCount={ballCount}
-            max_h={CANVAS_HEIGHT - 40}
-            max_w={width - 30}
+            onImpact={handleImpact}
           />
         )}
       </div>
       <div className="viz-card__foot">
         <Button
-          onClick={handleClick}
-          icon={bounceBall ? <PauseIcon /> : <PlayIcon />}
-          aria-label={bounceBall ? "Pause bouncing" : "Start bouncing"}
+          onClick={() => setRunning((value) => !value)}
+          icon={running ? <PauseIcon /> : <PlayIcon />}
+          aria-label={running ? "Pause the ball pit" : "Start the ball pit"}
         >
-          {bounceBall ? "Pause" : "Play"}
+          {running ? "Pause" : "Play"}
         </Button>
         <Slider
           label="Balls"
-          min={3}
-          max={40}
+          min={MIN_BALLS}
+          max={MAX_BALLS}
           value={ballCount}
-          onChange={handleCountChange}
+          onChange={setBallCount}
         />
+        <span className="viz-card__note ball-pit__count">
+          {impacts.toLocaleString()} impacts
+        </span>
       </div>
     </>
   );

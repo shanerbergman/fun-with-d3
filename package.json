@@ -15,7 +15,8 @@
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "test:sim": "node src/Components/D3Visualisations/BouncingBall/simulation.test.mjs"
   },
   "browserslist": {
     "production": [

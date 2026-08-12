@@ -481,6 +481,17 @@ svg {
   min-height: 340px;
 }
 
+.ball-pit {
+  line-height: 0;
+  overflow: hidden;
+}
+
+.ball-pit__count {
+  min-width: 92px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
 .map-body {
   display: flex;
   justify-content: center;
