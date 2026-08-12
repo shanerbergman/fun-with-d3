@@ -1,4 +1,5 @@
 import BouncingBallContainer from "./BouncingBall/BouncingBallContainer";
+import RadialBarsContainer from "./RadialBars/RadialBarsContainer";
 import ProgressBarsContainer from "./ProgressBars/ProgressBarsContainer";
 import ChartContainer from "./Charts/ChartContainer";
 import MapContainer from "./Map/MapContainer";
@@ -16,7 +17,7 @@ export const sections = [
   {
     id: "toys",
     title: "Toys",
-    meta: "Simulation · requestAnimationFrame, d3-interpolate",
+    meta: "Interactive · collision physics, d3-scaleRadial, arc tween",
     layout: "split",
     items: [
       {
@@ -27,8 +28,15 @@ export const sections = [
         render: () => <BouncingBallContainer />,
       },
       {
-        id: "circular_progress_bar",
+        id: "radial_bars",
         eyebrow: "Toy 02",
+        title: "Bitcoin, by Week",
+        tag: "Radial bars",
+        render: () => <RadialBarsContainer />,
+      },
+      {
+        id: "circular_progress_bar",
+        eyebrow: "Toy 03",
         title: "Circular Progress",
         tag: "Arc tween",
         render: () => <ProgressBarsContainer />,

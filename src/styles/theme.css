@@ -339,8 +339,10 @@ svg {
   padding: 24px 0 8px;
 }
 
+/* Explicit two-up rather than auto-fit: with three cards in the row, an
+   auto-fit track can squeeze all three onto one line at wide viewports. */
 .card-grid--split {
-  grid-template-columns: repeat(auto-fit, minmax(430px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .card-grid--full {
@@ -490,6 +492,22 @@ svg {
   min-width: 92px;
   text-align: right;
   font-variant-numeric: tabular-nums;
+}
+
+.radial-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 340px;
+  line-height: 0;
+}
+
+.radial-body svg {
+  cursor: crosshair;
+}
+
+.radial__error {
+  padding: 40px 22px;
 }
 
 .map-body {
