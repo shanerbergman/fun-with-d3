@@ -31,7 +31,7 @@ export const sections = [
         id: "radial_bars",
         eyebrow: "Toy 02",
         title: "Bitcoin, by Week",
-        tag: "Radial bars",
+        tag: "Live",
         render: () => <RadialBarsContainer />,
       },
       {

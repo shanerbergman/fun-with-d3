@@ -506,8 +506,59 @@ svg {
   cursor: crosshair;
 }
 
-.radial__error {
-  padding: 40px 22px;
+.radial__hint {
+  margin-left: auto;
+  text-align: right;
+}
+
+/* --- live feed status --- */
+
+.feed {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted-2);
+  white-space: nowrap;
+}
+
+.feed__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--faint);
+  flex: none;
+}
+
+.feed--live .feed__dot {
+  background: var(--accent-green);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+.feed--bundled .feed__dot {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--faint);
+}
+
+.feed--live {
+  color: var(--ink-2);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feed--live .feed__dot {
+    animation: none;
+  }
 }
 
 .map-body {

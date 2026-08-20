@@ -18,7 +18,8 @@
     "serve": "vite preview",
     "test:sim": "node src/Components/D3Visualisations/BouncingBall/simulation.test.mjs",
     "test:radial": "node src/Components/D3Visualisations/RadialBars/weeklyData.test.mjs",
-    "test": "npm run test:sim && npm run test:radial"
+    "test:feed": "node src/Components/D3Visualisations/RadialBars/priceSource.test.mjs",
+    "test": "npm run test:sim && npm run test:radial && npm run test:feed"
   },
   "browserslist": {
     "production": [

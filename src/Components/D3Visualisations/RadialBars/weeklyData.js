@@ -43,6 +43,20 @@ export function toWeekly(rows, yearsBack = 5) {
     if (!Number.isFinite(ms) || !Number.isFinite(close) || close <= 0) continue;
     parsed.push({ ms, close });
   }
+  return rollupWeekly(parsed, yearsBack);
+}
+
+/**
+ * The shared rollup. Both the bundled CSV and the live Coinbase feed funnel
+ * through here, so there is only one definition of "a week's close".
+ *
+ * @param points    [{ ms, close }] in any order
+ * @param yearsBack window measured back from the newest point (null = all)
+ */
+export function rollupWeekly(points, yearsBack = 5) {
+  const parsed = points.filter(
+    (p) => Number.isFinite(p.ms) && Number.isFinite(p.close) && p.close > 0
+  );
   if (!parsed.length) return [];
 
   parsed.sort((a, b) => a.ms - b.ms);

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import {
-  toWeekly,
   angleAt,
   angleCenter,
   bandWidth,
@@ -9,8 +8,6 @@ import {
   yearTicks,
   toArcAngle,
 } from "./weeklyData";
-
-const YEARS_BACK = 5;
 
 /** Warm ramp: quiet sand at low prices, rust at the peaks. */
 const COLOR_RAMP = ["#c9bca6", "#d9a06a", "#e0703f", "#b33a21"];
@@ -27,26 +24,9 @@ const fmtWeek = d3.utcFormat("%b %-d, %Y");
  * hit reliably. One transparent overlay catches the pointer and the readout
  * lands in the middle of the ring, where there's room for it.
  */
-const RadialBarChart = ({ width, height }) => {
+const RadialBarChart = ({ width, height, weeks = [] }) => {
   const svgRef = useRef();
-  const [weeks, setWeeks] = useState([]);
   const [hover, setHover] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    d3.csv("./BTC-USD.csv")
-      .then((rows) => {
-        if (cancelled) return;
-        const data = toWeekly(rows, YEARS_BACK);
-        if (!data.length) setError("No price data");
-        setWeeks(data);
-      })
-      .catch(() => !cancelled && setError("Could not load BTC-USD.csv"));
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const cx = width / 2;
   const cy = height / 2;
@@ -112,7 +92,10 @@ const RadialBarChart = ({ width, height }) => {
       .data(weeks)
       .join("path")
       .attr("d", arc)
-      .attr("fill", (d) => color(d.close));
+      .attr("fill", (d) => color(d.close))
+      // The final week is still in progress, so outline rather than fill it.
+      .attr("stroke", (d) => (d.partial ? "#171412" : "none"))
+      .attr("stroke-width", (d) => (d.partial ? 0.9 : 0));
 
     // --- year labels ---
     root
@@ -174,10 +157,7 @@ const RadialBarChart = ({ width, height }) => {
 
   const active = hover == null ? null : weeks[hover];
   const latest = weeks.length ? weeks[weeks.length - 1] : null;
-
-  if (error) {
-    return <p className="viz-card__note radial__error">{error}</p>;
-  }
+  const shown = active || latest;
 
   return (
     <svg
@@ -210,7 +190,7 @@ const RadialBarChart = ({ width, height }) => {
           fontSize={innerR > 46 ? 26 : 20}
           fill="var(--ink)"
         >
-          {active ? fmtPrice(active.close) : latest ? fmtPrice(latest.close) : ""}
+          {shown ? fmtPrice(shown.close) : ""}
         </text>
         <text
           textAnchor="middle"
@@ -220,11 +200,13 @@ const RadialBarChart = ({ width, height }) => {
           letterSpacing="0.1em"
           fill="var(--muted-2)"
         >
-          {active
-            ? fmtWeek(active.week).toUpperCase()
-            : latest
-            ? "LATEST CLOSE"
-            : ""}
+          {!shown
+            ? ""
+            : active
+            ? `${fmtWeek(active.week).toUpperCase()}${
+                active.partial ? " · IN PROGRESS" : ""
+              }`
+            : "THIS WEEK"}
         </text>
       </g>
     </svg>
