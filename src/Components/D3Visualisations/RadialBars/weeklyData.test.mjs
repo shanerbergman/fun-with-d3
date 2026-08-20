@@ -14,7 +14,7 @@ import {
   angleCenter,
   angleAt,
   bandWidth,
-  yearTicks,
+  yearSpans,
   ANGLE_START,
   ANGLE_SWEEP,
   RING_GAP,
@@ -162,14 +162,72 @@ console.log("\n2b. d3.arc angles line up with atan2 angles");
   ok("quarter way round is near 3 o'clock", qx > 0.98 && Math.abs(qy) < 0.12, `(${qx.toFixed(3)}, ${qy.toFixed(3)})`);
 }
 
-// --- 3. year ticks --------------------------------------------------------
-console.log("\n3. year labels");
+// --- 3. year spans --------------------------------------------------------
+// These drive the alternating bands and boundary ticks, so any gap or overlap
+// would show up as a seam or a double-tinted wedge in the ring.
+console.log("\n3. year spans tile the ring exactly once");
 {
-  const ticks = yearTicks(weeks);
-  console.log(`       ${ticks.map((t) => t.year).join(", ")}`);
-  ok("one tick per year", ticks.length >= 4 && ticks.length <= 6, `${ticks.length} ticks`);
-  ok("ticks ascend", ticks.every((t, i) => i === 0 || t.index > ticks[i - 1].index));
-  ok("indices are in range", ticks.every((t) => t.index >= 0 && t.index < weeks.length));
+  const spans = yearSpans(weeks);
+  console.log(
+    `       ${spans.map((s) => `${s.year}:${s.end - s.start}w`).join("  ")}`
+  );
+
+  ok("one span per year", spans.length >= 5 && spans.length <= 7, `${spans.length} spans`);
+  ok("years ascend", spans.every((s, i) => i === 0 || s.year > spans[i - 1].year));
+
+  ok("starts at the first week", spans[0].start === 0);
+  ok("ends at the last week", spans[spans.length - 1].end === weeks.length);
+  ok(
+    "spans are contiguous with no gap or overlap",
+    spans.every((s, i) => i === 0 || s.start === spans[i - 1].end)
+  );
+  ok("every span is non-empty", spans.every((s) => s.end > s.start));
+
+  // The decisive property: each week belongs to exactly one band.
+  const covered = new Array(weeks.length).fill(0);
+  for (const s of spans) for (let i = s.start; i < s.end; i++) covered[i]++;
+  ok("every week covered exactly once", covered.every((c) => c === 1));
+
+  ok(
+    "each span's weeks really are that year",
+    spans.every((s) =>
+      weeks.slice(s.start, s.end).every((w) => w.week.getUTCFullYear() === s.year)
+    )
+  );
+
+  // Alternating parity is what the banding relies on.
+  const banded = spans.filter((_, i) => i % 2 === 1);
+  ok("alternate years are banded", banded.length === Math.floor(spans.length / 2), `${banded.length} banded`);
+  ok(
+    "no two banded spans are adjacent",
+    banded.every((s, i) => i === 0 || s.start > banded[i - 1].end)
+  );
+
+  // Full years should be ~52 weeks; the first and last are partial.
+  const middle = spans.slice(1, -1);
+  ok(
+    "interior years are full",
+    middle.every((s) => s.end - s.start >= 51 && s.end - s.start <= 53),
+    middle.map((s) => s.end - s.start).join(",")
+  );
+}
+
+// --- 3b. year span edge cases --------------------------------------------
+console.log("\n3b. year spans handle awkward input");
+{
+  ok("empty input gives no spans", yearSpans([]).length === 0);
+
+  const single = yearSpans([{ week: new Date(Date.UTC(2024, 5, 2)) }]);
+  ok("single week gives one span", single.length === 1 && single[0].end === 1);
+
+  // A week starting Dec 29 2024 is filed under 2024 even though it runs into
+  // 2025 — the rule that keeps spans contiguous.
+  const straddle = yearSpans([
+    { week: new Date(Date.UTC(2024, 11, 29)) },
+    { week: new Date(Date.UTC(2025, 0, 5)) },
+  ]);
+  ok("straddling week files under its start year", straddle.length === 2 && straddle[0].year === 2024);
+  ok("straddle stays contiguous", straddle[0].end === straddle[1].start);
 }
 
 // --- 4. windowing ---------------------------------------------------------

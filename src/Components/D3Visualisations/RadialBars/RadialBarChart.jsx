@@ -5,7 +5,7 @@ import {
   angleCenter,
   bandWidth,
   indexForAngle,
-  yearTicks,
+  yearSpans,
   toArcAngle,
 } from "./weeklyData";
 
@@ -30,7 +30,8 @@ const RadialBarChart = ({ width, height, weeks = [] }) => {
 
   const cx = width / 2;
   const cy = height / 2;
-  const outerR = Math.max(40, Math.min(width, height) / 2 - 30);
+  // Leaves room outside the rim for boundary ticks and the year labels.
+  const outerR = Math.max(40, Math.min(width, height) / 2 - 40);
   const innerR = Math.max(26, outerR * 0.38);
 
   useEffect(() => {
@@ -59,6 +60,27 @@ const RadialBarChart = ({ width, height, weeks = [] }) => {
       .cornerRadius(0.6);
 
     const root = svg.select(".ring").attr("transform", `translate(${cx},${cy})`);
+    const spans = yearSpans(weeks);
+    const n = weeks.length;
+
+    // --- alternating year bands (bottom layer) ---
+    // A faint wash behind every other year, so the eye can pick out where one
+    // year ends without having to read a label.
+    const band = d3
+      .arc()
+      .innerRadius(innerR)
+      .outerRadius(outerR + 6)
+      .startAngle((d) => toArcAngle(angleAt(d.start, n)))
+      .endAngle((d) => toArcAngle(angleAt(d.end, n)));
+
+    root
+      .select(".year-bands")
+      .selectAll("path")
+      .data(spans.filter((_, i) => i % 2 === 1))
+      .join("path")
+      .attr("d", band)
+      .attr("fill", "#171412")
+      .attr("opacity", 0.045);
 
     // --- price rings (drawn under the bars) ---
     const ticks = r.ticks(3).filter((t) => t > 0);
@@ -72,17 +94,25 @@ const RadialBarChart = ({ width, height, weeks = [] }) => {
       .attr("stroke", "#e0d9ce")
       .attr("stroke-dasharray", "2 4");
 
+    // Price labels sit in the top gap, above their ring. Painted last-ish with
+    // a paper-coloured halo so they stay legible over bars and year bands.
     root
       .select(".grid-labels")
       .selectAll("text")
       .data(ticks)
       .join("text")
       .attr("y", (d) => -r(d))
-      .attr("dy", "-0.35em")
+      .attr("dy", "-0.5em")
       .attr("text-anchor", "middle")
       .attr("font-family", "IBM Plex Mono, monospace")
-      .attr("font-size", 9)
-      .attr("fill", "#a79e92")
+      .attr("font-size", 11)
+      .attr("font-weight", 500)
+      .attr("letter-spacing", "0.04em")
+      .attr("fill", "#4a443d")
+      .attr("stroke", "#fdfcfa")
+      .attr("stroke-width", 3.5)
+      .attr("stroke-linejoin", "round")
+      .attr("paint-order", "stroke")
       .text(fmtAxis);
 
     // --- bars ---
@@ -97,20 +127,41 @@ const RadialBarChart = ({ width, height, weeks = [] }) => {
       .attr("stroke", (d) => (d.partial ? "#171412" : "none"))
       .attr("stroke-width", (d) => (d.partial ? 0.9 : 0));
 
-    // --- year labels ---
+    // --- year boundary ticks ---
+    // One line per Jan 1 transition, running from the inner radius out past
+    // the rim to meet its label. The first span starts at the ring's own gap,
+    // so it needs no divider.
+    root
+      .select(".year-ticks")
+      .selectAll("line")
+      .data(spans.slice(1))
+      .join("line")
+      .attr("x1", (d) => Math.cos(angleAt(d.start, n)) * innerR)
+      .attr("y1", (d) => Math.sin(angleAt(d.start, n)) * innerR)
+      .attr("x2", (d) => Math.cos(angleAt(d.start, n)) * (outerR + 12))
+      .attr("y2", (d) => Math.sin(angleAt(d.start, n)) * (outerR + 12))
+      .attr("stroke", "#171412")
+      .attr("stroke-opacity", 0.24)
+      .attr("stroke-width", 1);
+
+    // --- year labels, centred on each band rather than sat on its edge ---
+    const labelR = outerR + 24;
     root
       .select(".years")
       .selectAll("text")
-      .data(yearTicks(weeks))
+      .data(spans)
       .join("text")
-      .attr("x", (d) => Math.cos(angleCenter(d.index, weeks.length)) * (outerR + 14))
-      .attr("y", (d) => Math.sin(angleCenter(d.index, weeks.length)) * (outerR + 14))
+      .attr("x", (d) => Math.cos(angleCenter((d.start + d.end - 1) / 2, n)) * labelR)
+      .attr("y", (d) => Math.sin(angleCenter((d.start + d.end - 1) / 2, n)) * labelR)
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
       .attr("font-family", "IBM Plex Mono, monospace")
-      .attr("font-size", 10)
-      .attr("letter-spacing", "0.08em")
-      .attr("fill", "#8a8177")
+      .attr("font-size", 11)
+      .attr("font-weight", 500)
+      .attr("letter-spacing", "0.1em")
+      .attr("fill", "#4a443d")
+      // Hide a stub year that has too few weeks to label legibly.
+      .attr("opacity", (d) => (d.end - d.start >= 4 ? 1 : 0))
       .text((d) => d.year);
   }, [weeks, cx, cy, innerR, outerR]);
 
@@ -169,7 +220,10 @@ const RadialBarChart = ({ width, height, weeks = [] }) => {
       role="img"
       aria-label={`Bitcoin weekly closing price, ${weeks.length} weeks`}
     >
+      {/* Layer order matters: bands wash behind everything, ticks and labels
+          sit above the bars so they stay readable. */}
       <g className="ring">
+        <g className="year-bands" />
         <g className="grid" />
         <g className="bars" />
         <line
@@ -179,6 +233,7 @@ const RadialBarChart = ({ width, height, weeks = [] }) => {
           strokeDasharray="2 2"
           display="none"
         />
+        <g className="year-ticks" />
         <g className="grid-labels" />
         <g className="years" />
 

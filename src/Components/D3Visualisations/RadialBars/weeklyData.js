@@ -129,19 +129,26 @@ export function indexForAngle(theta, count) {
 }
 
 /**
- * First bar index of each calendar year present, for the ring's year labels.
- * @returns [{ year, index }]
+ * Contiguous index spans, one per calendar year, for the ring's alternating
+ * bands, boundary ticks and labels.
+ *
+ * A week is filed under the year its *start* falls in, so the last week of
+ * December belongs to the old year even when most of its days are in the new
+ * one. That keeps the spans contiguous and non-overlapping — every week lands
+ * in exactly one band — which matters more here than calendar purity.
+ *
+ * @returns [{ year, start, end }] with `end` exclusive
  */
-export function yearTicks(weeks) {
-  const seen = new Set();
-  const ticks = [];
+export function yearSpans(weeks) {
+  const spans = [];
   weeks.forEach((d, index) => {
     const year = d.week.getUTCFullYear();
-    if (!seen.has(year)) {
-      seen.add(year);
-      ticks.push({ year, index });
+    const last = spans[spans.length - 1];
+    if (last && last.year === year) {
+      last.end = index + 1;
+    } else {
+      spans.push({ year, start: index, end: index + 1 });
     }
   });
-  // The first year is usually a partial stub sitting right against the gap.
-  return ticks.length > 1 && ticks[0].index < 2 ? ticks.slice(1) : ticks;
+  return spans;
 }
