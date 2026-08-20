@@ -215,11 +215,13 @@ svg {
   font-size: 14px;
 }
 
-.site-nav a {
+/* Exclude .btn: a bare `.site-nav a` (0,1,1) outranks `.btn` (0,1,0) and would
+   repaint the dark pill's label dark-on-dark. */
+.site-nav a:not(.btn) {
   color: var(--ink-3);
 }
 
-.site-nav a:hover {
+.site-nav a:not(.btn):hover {
   color: var(--ink);
 }
 
